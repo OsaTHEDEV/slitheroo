@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Snake</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="A premium neon-style Snake game built with HTML5 Canvas.">
+</head>
+
+<body>
+    <div class="game-container">
+        <header>
+            <div class="header-top">
+                <h1>NEON SNAKE</h1>
+                <div class="header-controls">
+                    <button id="pause-btn" title="Pause Game (P)">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                    </button>
+                    <button id="main-home-btn" title="Exit to Main Menu">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="score-board">
+                <div class="score-item">Score: <span id="score">0</span></div>
+                <div class="score-item">Level: <span id="level">1</span></div>
+                <div class="score-item">High Score: <span id="high-score">0</span></div>
+            </div>
+        </header>
+
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+        </div>
+    </div>
+
+    <div id="start-screen" class="overlay active">
+        <div class="menu-card">
+            <h2>Ready?</h2>
+            <div class="mode-selection">
+                <button class="mode-btn active" data-mode="RANKED">RANKED</button>
+                <button class="mode-btn" data-mode="ZEN">ZEN</button>
+            </div>
+            <p id="mode-desc">Traditional Snake. Walls are deadly.</p>
+            <div class="difficulty-selection">
+                <h3>Difficulty</h3>
+                <div class="diff-btns">
+                    <button class="diff-btn active" data-diff="NORMAL">NORMAL</button>
+                    <button class="diff-btn" data-diff="HARD">HARD</button>
+                </div>
+            </div>
+            <div class="menu-actions">
+                <button id="start-btn" class="glow-btn">START GAME</button>
+                <button id="customize-btn" class="glass-btn">CUSTOMIZE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customize-screen" class="overlay hidden">
+        <div class="menu-card">
+            <h2>Customization</h2>
+
+            <div class="custom-section">
+                <h3>Skins</h3>
+                <div class="options-grid" id="skins-grid">
+                    <div class="option selected" data-skin="neon">Neon</div>
+                    <div class="option" data-skin="gradient">Retro</div>
+                    <div class="option" data-skin="striped">Striped</div>
+                    <div class="option" data-skin="glow">Pulse</div>
+                </div>
+            </div>
+
+            <div class="custom-section">
+                <h3>Themes</h3>
+                <div class="options-grid" id="themes-grid">
+                    <div class="option selected" data-theme="default">Deep Sea</div>
+                    <div class="option" data-theme="cyberpunk">Cyberpunk</div>
+                    <div class="option" data-theme="classic">Matrix</div>
+                    <div class="option" data-theme="sunset">Sunset</div>
+                </div>
+            </div>
+
+            <div class="custom-section" id="zen-options">
+                <h3>Zen Mode Settings</h3>
+                <div class="toggle-control">
+                    <span>Show Obstacles</span>
+                    <label class="switch">
+                        <input type="checkbox" id="zen-obstacles-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <button id="back-to-menu-btn" class="glow-btn small">BACK</button>
+        </div>
+    </div>
+
+    <div id="pause-screen" class="overlay hidden">
+        <div class="menu-card">
+            <h2>Paused</h2>
+
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="label">Score</span>
+                    <span id="pause-score" class="value">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Level</span>
+                    <span id="pause-level" class="value">1</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Length</span>
+                    <span id="pause-length" class="value">3</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Occupancy</span>
+                    <span id="pause-occupancy" class="value">0%</span>
+                </div>
+                <div class="summary-item full-width">
+                    <span class="label">Mode</span>
+                    <span id="pause-mode" class="value">RANKED</span>
+                </div>
+            </div>
+
+            <div class="menu-actions">
+                <button id="resume-btn" class="glow-btn">RESUME</button>
+                <button id="pause-main-menu-btn" class="glass-btn">MAIN MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-over-screen" class="overlay hidden">
+        <div class="menu-card">
+            <h2 class="danger-text">GAME OVER</h2>
+
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="label">Score</span>
+                    <span id="summary-score" class="value">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Level</span>
+                    <span id="summary-level" class="value">1</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Length</span>
+                    <span id="summary-length" class="value">3</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Occupancy</span>
+                    <span id="summary-occupancy" class="value">0%</span>
+                </div>
+                <div class="summary-item full-width">
+                    <span class="label">Mode</span>
+                    <span id="summary-mode" class="value">RANKED</span>
+                </div>
+                <div class="summary-item full-width highlight">
+                    <span class="label">Closest to Ultimate Victory</span>
+                    <span id="summary-best-occupancy" class="value">0%</span>
+                </div>
+            </div>
+
+            <div class="menu-actions">
+                <button id="restart-btn" class="glow-btn">ONE MORE BITE</button>
+                <button id="main-menu-btn" class="glass-btn">MAIN MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
