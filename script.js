@@ -294,7 +294,7 @@ function generateFood() {
     };
 
     if (snake.some(isCollision) ||
-        (gameMode === 'RANKED' && obstacles.some(isCollision)) ||
+        ((gameMode === 'RANKED' || (gameMode === 'ZEN' && zenShowObstacles)) && obstacles.some(isCollision)) ||
         isTrapped()) {
         generateFood();
     }
@@ -318,7 +318,7 @@ function checkLevelUp() {
         // Dynamic Theme/Color progression
         updateLevelTheme();
 
-        if (gameMode === 'RANKED') generateObstacles();
+        if (gameMode === 'RANKED' || (gameMode === 'ZEN' && zenShowObstacles)) generateObstacles();
     }
 }
 
@@ -424,8 +424,10 @@ function changeDirection(event) {
 
 function didGameEnd() {
     const head = snake[0];
-    if (gameMode === 'RANKED') {
-        if (head.x < 0 || head.x >= TILE_COUNT || head.y < 0 || head.y >= TILE_COUNT) return true;
+    if (gameMode === 'RANKED' || (gameMode === 'ZEN' && zenShowObstacles)) {
+        if (head.x < 0 || head.x >= TILE_COUNT || head.y < 0 || head.y >= TILE_COUNT) {
+            if (gameMode === 'RANKED') return true;
+        }
         if (obstacles.some(obs => obs.x === head.x && obs.y === head.y)) return true;
     }
     for (let i = 4; i < snake.length; i++) {
