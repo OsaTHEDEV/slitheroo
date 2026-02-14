@@ -6,6 +6,7 @@ const highScoreElement = document.getElementById('high-score');
 const startScreen = document.getElementById('start-screen');
 const gameOverScreen = document.getElementById('game-over-screen');
 const customizeScreen = document.getElementById('customize-screen');
+const gameOverTitle = document.querySelector('#game-over-screen .danger-text');
 const finalScoreElement = document.getElementById('final-score'); // Keeping for compatibility if needed elsewhere, but updating new items
 const summaryScore = document.getElementById('summary-score');
 const summaryLevel = document.getElementById('summary-level');
@@ -60,6 +61,7 @@ const OBSTACLE_MOVE_INTERVAL = 600; // ms
 let zenShowObstacles = false;
 let arenaExpanded = false;
 const MAX_ARENA_SIZE = 600;
+const DEFAULT_GAME_OVER_TITLE = 'GAME OVER';
 
 // Initialize High Score Display
 highScoreElement.textContent = highScore;
@@ -134,6 +136,7 @@ function hideCustomization() {
 }
 
 function startGame() {
+    resetGameOverTitle();
     resetGame();
     startScreen.classList.remove('active');
     startScreen.classList.add('hidden');
@@ -171,6 +174,14 @@ function resetGame() {
     level = 1;
     currentSpeed = GAME_SPEED_START;
     obstacles = [];
+    lastObstacleMoveTime = 0;
+
+    // Reset arena before food generation so spawn uses the current board size.
+    canvas.width = 400;
+    canvas.height = 400;
+    TILE_COUNT = canvas.width / TILE_SIZE;
+    arenaExpanded = false;
+
     scoreElement.textContent = score;
     levelElement.textContent = level;
     snake = [
@@ -181,12 +192,6 @@ function resetGame() {
     dx = 1;
     dy = 0;
     generateFood();
-
-    // Reset Arena Size
-    canvas.width = 400;
-    canvas.height = 400;
-    TILE_COUNT = canvas.width / TILE_SIZE;
-    arenaExpanded = false;
     isPaused = false;
 }
 
@@ -262,17 +267,14 @@ function moveObstacles() {
 }
 
 function generateFood() {
-    food.x = Math.floor(Math.random() * TILE_COUNT);
-    food.y = Math.floor(Math.random() * TILE_COUNT);
-
-    const isCollision = (obj) => obj.x === food.x && obj.y === food.y;
-    const isTrapped = () => {
+    const isFoodPositionValid = (x, y) => {
+        const isCollision = (obj) => obj.x === x && obj.y === y;
         let adjacentObstacles = 0;
         const neighbors = [
-            { x: food.x + 1, y: food.y },
-            { x: food.x - 1, y: food.y },
-            { x: food.x, y: food.y + 1 },
-            { x: food.x, y: food.y - 1 }
+            { x: x + 1, y: y },
+            { x: x - 1, y: y },
+            { x: x, y: y + 1 },
+            { x: x, y: y - 1 }
         ];
 
         neighbors.forEach(n => {
@@ -289,15 +291,40 @@ function generateFood() {
             }
         });
 
-        // If 3 or more sides are blocked by walls/obstacles, it's a potential trap
-        return adjacentObstacles >= 3;
+        const isTrapped = adjacentObstacles >= 3;
+        return !(
+            snake.some(isCollision) ||
+            ((gameMode === 'RANKED' || (gameMode === 'ZEN' && zenShowObstacles)) && obstacles.some(isCollision)) ||
+            isTrapped
+        );
     };
 
-    if (snake.some(isCollision) ||
-        ((gameMode === 'RANKED' || (gameMode === 'ZEN' && zenShowObstacles)) && obstacles.some(isCollision)) ||
-        isTrapped()) {
-        generateFood();
+    const maxAttempts = TILE_COUNT * TILE_COUNT * 2;
+
+    for (let attempts = 0; attempts < maxAttempts; attempts++) {
+        const candidateX = Math.floor(Math.random() * TILE_COUNT);
+        const candidateY = Math.floor(Math.random() * TILE_COUNT);
+        if (isFoodPositionValid(candidateX, candidateY)) {
+            food.x = candidateX;
+            food.y = candidateY;
+            return true;
+        }
     }
+
+    // Deterministic fallback if random attempts fail in dense boards.
+    for (let y = 0; y < TILE_COUNT; y++) {
+        for (let x = 0; x < TILE_COUNT; x++) {
+            if (isFoodPositionValid(x, y)) {
+                food.x = x;
+                food.y = y;
+                return true;
+            }
+        }
+    }
+
+    // No valid tile remains: end as a win state instead of hanging.
+    if (isPlaying) victory();
+    return false;
 }
 
 function checkLevelUp() {
@@ -345,19 +372,38 @@ function showLevelNotice(text) {
 }
 
 function generateObstacles() {
-    while (obstacles.length < level - 1) {
-        let obstacle = {
+    const head = snake[0];
+    const isTooCloseToHead = (x, y) => Math.abs(x - head.x) < 3 && Math.abs(y - head.y) < 3;
+    let safeFreeCells = 0;
+
+    for (let y = 0; y < TILE_COUNT; y++) {
+        for (let x = 0; x < TILE_COUNT; x++) {
+            const occupied = snake.some(p => p.x === x && p.y === y) ||
+                (food.x === x && food.y === y) ||
+                obstacles.some(o => o.x === x && o.y === y);
+
+            if (!occupied && !isTooCloseToHead(x, y)) {
+                safeFreeCells++;
+            }
+        }
+    }
+
+    const desiredObstacleCount = Math.min(level - 1, obstacles.length + safeFreeCells);
+    const maxAttempts = TILE_COUNT * TILE_COUNT * 3;
+    let attempts = 0;
+
+    while (obstacles.length < desiredObstacleCount && attempts < maxAttempts) {
+        attempts++;
+        const obstacle = {
             x: Math.floor(Math.random() * TILE_COUNT),
             y: Math.floor(Math.random() * TILE_COUNT)
         };
 
-        const head = snake[0];
-        const tooClose = Math.abs(obstacle.x - head.x) < 3 && Math.abs(obstacle.y - head.y) < 3;
         const occupied = snake.some(p => p.x === obstacle.x && p.y === obstacle.y) ||
             (food.x === obstacle.x && food.y === obstacle.y) ||
             obstacles.some(o => o.x === obstacle.x && o.y === obstacle.y);
 
-        if (!tooClose && !occupied) {
+        if (!isTooCloseToHead(obstacle.x, obstacle.y) && !occupied) {
             obstacles.push(obstacle);
         }
     }
@@ -528,7 +574,15 @@ function victory() {
     showLevelNotice("ULTIMATE VICTORY!");
     setTimeout(() => {
         endGame();
-        document.querySelector('.danger-text').textContent = "YOU WON!";
-        document.querySelector('.danger-text').style.color = "var(--snake-color)";
+        if (gameOverTitle) {
+            gameOverTitle.textContent = "YOU WON!";
+            gameOverTitle.style.color = "var(--snake-color)";
+        }
     }, 2000);
+}
+
+function resetGameOverTitle() {
+    if (!gameOverTitle) return;
+    gameOverTitle.textContent = DEFAULT_GAME_OVER_TITLE;
+    gameOverTitle.style.color = '';
 }
