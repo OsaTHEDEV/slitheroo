@@ -7,7 +7,6 @@ const startScreen = document.getElementById('start-screen');
 const gameOverScreen = document.getElementById('game-over-screen');
 const customizeScreen = document.getElementById('customize-screen');
 const gameOverTitle = document.querySelector('#game-over-screen .danger-text');
-const finalScoreElement = document.getElementById('final-score'); // Keeping for compatibility if needed elsewhere, but updating new items
 const summaryScore = document.getElementById('summary-score');
 const summaryLevel = document.getElementById('summary-level');
 const summaryLength = document.getElementById('summary-length');
@@ -200,13 +199,14 @@ function gameLoop() {
 
     setTimeout(gameLoop, currentSpeed);
 
+    moveSnake();
+
     if (didGameEnd()) {
         endGame();
         return;
     }
 
     clearCanvas();
-    moveSnake();
     drawFood();
     if (gameMode === 'RANKED' || (gameMode === 'ZEN' && zenShowObstacles)) {
         drawObstacles();
@@ -455,15 +455,30 @@ function drawFood() {
 }
 
 function changeDirection(event) {
+    const key = event.key;
+    const normalizedKey = typeof key === 'string' ? key.toLowerCase() : '';
+
     // Handle Pause Toggle (P or Escape)
-    if (event.keyCode === 80 || event.keyCode === 27) {
+    if (key === 'Escape' || normalizedKey === 'p') {
         togglePause();
         return;
     }
 
-    const keys = { 37: [-1, 0], 39: [1, 0], 38: [0, -1], 40: [0, 1], 65: [-1, 0], 68: [1, 0], 87: [0, -1], 83: [0, 1] };
-    if (!keys[event.keyCode]) return;
-    const [newDx, newDy] = keys[event.keyCode];
+    const directions = {
+        ArrowLeft: [-1, 0],
+        ArrowRight: [1, 0],
+        ArrowUp: [0, -1],
+        ArrowDown: [0, 1],
+        a: [-1, 0],
+        d: [1, 0],
+        w: [0, -1],
+        s: [0, 1]
+    };
+
+    const direction = directions[key] || directions[normalizedKey];
+    if (!direction) return;
+
+    const [newDx, newDy] = direction;
     if (newDx === -dx && newDy === -dy) return;
     dx = newDx; dy = newDy;
 }
@@ -503,8 +518,6 @@ function endGame() {
     }
 
     populateSummary('summary');
-
-    if (finalScoreElement) finalScoreElement.textContent = score; // Fallback
 
     gameOverScreen.classList.remove('hidden');
     gameOverScreen.classList.add('active');
