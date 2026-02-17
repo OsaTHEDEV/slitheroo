@@ -566,7 +566,7 @@ input:checked+.slider:before {
 }
 
 #mobile-notice {
-    display: none;
+    display: block;
     max-width: 300px;
     text-align: center;
 }
@@ -585,7 +585,6 @@ input:checked+.slider:before {
     }
 
     #mobile-notice {
-        display: block;
         opacity: 0.6;
     }
 }
