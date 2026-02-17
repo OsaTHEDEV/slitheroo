@@ -1,3 +1,4 @@
+/* CSS for Neon Snake */
 :root {
     --bg-color: #0f172a;
     --grid-line: #1e293b;
@@ -74,6 +75,20 @@ header h1 {
     font-weight: 600;
     letter-spacing: 2px;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 0;
+}
+
+.brand-logo {
+    height: 44px;
+    width: auto;
+    display: block;
+    filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.45));
 }
 
 .header-top {
@@ -528,4 +543,49 @@ input:checked+.slider:before {
 #game-over-screen h2 {
     margin-bottom: 2rem;
     letter-spacing: 4px;
+}
+
+/* Game Footer Styling */
+.game-footer {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 2rem;
+}
+
+/* Subtle Labels */
+.subtle-text {
+    font-size: 0.75rem;
+    opacity: 0.3;
+    font-family: var(--font-main);
+    letter-spacing: 1px;
+    line-height: 1.4;
+    transition: opacity 0.3s ease;
+}
+
+#mobile-notice {
+    display: none;
+    max-width: 300px;
+    text-align: center;
+}
+
+@media (max-width: 768px), (pointer: coarse) {
+    .brand {
+        gap: 0.35rem;
+    }
+
+    .brand-logo {
+        height: 34px;
+    }
+
+    header h1 {
+        letter-spacing: 1px;
+    }
+
+    #mobile-notice {
+        display: block;
+        opacity: 0.6;
+    }
 }
