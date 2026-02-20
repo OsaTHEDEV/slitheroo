@@ -31,6 +31,9 @@ const skinOptions = document.querySelectorAll('#skins-grid .option');
 const themeOptions = document.querySelectorAll('#themes-grid .option');
 const zenObstaclesToggle = document.getElementById('zen-obstacles-toggle');
 const diffBtns = document.querySelectorAll('.diff-btn');
+const splashScreen = document.getElementById('splash-screen');
+const splashTitle = document.getElementById('splash-title');
+const splashSubtitle = document.getElementById('splash-subtitle');
 
 // Game Constants
 const TILE_SIZE = 20;
@@ -61,6 +64,9 @@ let zenShowObstacles = false;
 let arenaExpanded = false;
 const MAX_ARENA_SIZE = 600;
 const DEFAULT_GAME_OVER_TITLE = 'GAME OVER';
+const DEFAULT_SPLASH_TITLE = 'SLITHEROO';
+const DEFAULT_SPLASH_SUBTITLE = 'Enter the neon arena.';
+let splashTimerId = null;
 
 // Initialize High Score Display
 highScoreElement.textContent = highScore;
@@ -134,7 +140,46 @@ function hideCustomization() {
     startScreen.classList.add('active');
 }
 
-function startGame() {
+function showSplash(options = {}) {
+    if (!splashScreen) {
+        if (typeof options.onComplete === 'function') options.onComplete();
+        return;
+    }
+
+    const title = options.title || DEFAULT_SPLASH_TITLE;
+    const subtitle = options.subtitle || DEFAULT_SPLASH_SUBTITLE;
+    const duration = typeof options.duration === 'number' ? options.duration : 1300;
+
+    if (splashTimerId) {
+        clearTimeout(splashTimerId);
+        splashTimerId = null;
+    }
+
+    splashTitle.textContent = title;
+    splashSubtitle.textContent = subtitle;
+    splashScreen.classList.remove('hidden');
+    splashScreen.classList.add('active');
+
+    splashTimerId = setTimeout(() => {
+        splashScreen.classList.remove('active');
+        splashScreen.classList.add('hidden');
+        splashTimerId = null;
+
+        if (typeof options.onComplete === 'function') options.onComplete();
+    }, duration);
+}
+
+function startGame(showTransition = true) {
+    if (showTransition) {
+        showSplash({
+            title: 'GET READY',
+            subtitle: `${gameMode} mode - ${gameDifficulty}`,
+            duration: 900,
+            onComplete: () => startGame(false)
+        });
+        return;
+    }
+
     resetGameOverTitle();
     resetGame();
     startScreen.classList.remove('active');
@@ -549,7 +594,17 @@ function populateSummary(prefix) {
     if (bestElem) bestElem.textContent = bestOccupancyText;
 }
 
-function goToMainMenu() {
+function goToMainMenu(showTransition = true) {
+    if (showTransition) {
+        showSplash({
+            title: 'MAIN MENU',
+            subtitle: 'Tune settings and launch another run.',
+            duration: 850,
+            onComplete: () => goToMainMenu(false)
+        });
+        return;
+    }
+
     gameOverScreen.classList.remove('active');
     gameOverScreen.classList.add('hidden');
     customizeScreen.classList.remove('active');
@@ -599,3 +654,19 @@ function resetGameOverTitle() {
     gameOverTitle.textContent = DEFAULT_GAME_OVER_TITLE;
     gameOverTitle.style.color = '';
 }
+
+function initializeEntrySplash() {
+    startScreen.classList.remove('active');
+    startScreen.classList.add('hidden');
+    showSplash({
+        title: DEFAULT_SPLASH_TITLE,
+        subtitle: 'Ranked and Zen snake action.',
+        duration: 1500,
+        onComplete: () => {
+            startScreen.classList.remove('hidden');
+            startScreen.classList.add('active');
+        }
+    });
+}
+
+initializeEntrySplash();
