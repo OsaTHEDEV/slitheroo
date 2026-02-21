@@ -34,6 +34,18 @@ const diffBtns = document.querySelectorAll('.diff-btn');
 const splashScreen = document.getElementById('splash-screen');
 const splashTitle = document.getElementById('splash-title');
 const splashSubtitle = document.getElementById('splash-subtitle');
+const nicknameInput = document.getElementById('nickname-input');
+const saveNicknameBtn = document.getElementById('save-nickname-btn');
+const changeNicknameBtn = document.getElementById('change-nickname-btn');
+const nicknameError = document.getElementById('nickname-error');
+const currentNicknameElement = document.getElementById('current-nickname');
+const leaderboardStatus = document.getElementById('leaderboard-status');
+const dailyLeaderboardList = document.getElementById('daily-leaderboard-list');
+const alltimeLeaderboardList = document.getElementById('alltime-leaderboard-list');
+const dailyTabBtn = document.getElementById('lb-tab-daily');
+const alltimeTabBtn = document.getElementById('lb-tab-alltime');
+const submitStatus = document.getElementById('submit-status');
+const retrySubmitBtn = document.getElementById('retry-submit-btn');
 
 // Game Constants
 const TILE_SIZE = 20;
@@ -67,6 +79,17 @@ const DEFAULT_GAME_OVER_TITLE = 'GAME OVER';
 const DEFAULT_SPLASH_TITLE = 'SLITHEROO';
 const DEFAULT_SPLASH_SUBTITLE = 'Enter the neon arena.';
 let splashTimerId = null;
+let playerNickname = '';
+let supabaseClient = null;
+let hasPendingScoreSubmission = false;
+let lastSubmitTs = 0;
+let pendingScorePayload = null;
+const MAX_SAFE_SCORE = 1000000;
+const SCORE_SUBMIT_COOLDOWN_MS = 3000;
+const NICKNAME_KEY = 'slitherooNickname';
+const NICKNAME_SESSION_KEY = 'slitherooSessionNicknameConfirmed';
+const RESERVED_NICKNAMES = new Set(['anonymous']);
+const SUPABASE_CONFIG = window.SLITHEROO_CONFIG || { SUPABASE_URL: '', SUPABASE_ANON_KEY: '' };
 
 // Initialize High Score Display
 highScoreElement.textContent = highScore;
@@ -82,6 +105,14 @@ pauseMainMenuBtn.addEventListener('click', goToMainMenu);
 mainHomeBtn.addEventListener('click', goToMainMenu);
 customizeBtn.addEventListener('click', showCustomization);
 backToMenuBtn.addEventListener('click', hideCustomization);
+saveNicknameBtn.addEventListener('click', onSaveNickname);
+changeNicknameBtn.addEventListener('click', onChangeNickname);
+nicknameInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') onSaveNickname();
+});
+dailyTabBtn.addEventListener('click', () => switchLeaderboardTab('daily'));
+alltimeTabBtn.addEventListener('click', () => switchLeaderboardTab('alltime'));
+retrySubmitBtn.addEventListener('click', retryLastSubmission);
 
 modeBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -170,6 +201,10 @@ function showSplash(options = {}) {
 }
 
 function startGame(showTransition = true) {
+    if (!ensureNicknameReady()) {
+        return;
+    }
+
     if (showTransition) {
         showSplash({
             title: 'GET READY',
@@ -544,6 +579,7 @@ function didGameEnd() {
 
 function endGame() {
     isPlaying = false;
+    hasPendingScoreSubmission = false;
 
     const gameData = {
         score: score,
@@ -566,6 +602,7 @@ function endGame() {
 
     gameOverScreen.classList.remove('hidden');
     gameOverScreen.classList.add('active');
+    submitScoreIfEligible();
 }
 
 function populateSummary(prefix) {
@@ -616,6 +653,8 @@ function goToMainMenu(showTransition = true) {
     isPlaying = false;
     isPaused = false;
     resetGame(); // Prepare for next session
+    setSubmitStatus('');
+    loadLeaderboards();
 }
 
 function checkArenaExpansion() {
@@ -655,7 +694,274 @@ function resetGameOverTitle() {
     gameOverTitle.style.color = '';
 }
 
+function initializeBackend() {
+    if (!window.supabase || !window.supabase.createClient) {
+        console.warn('Supabase client library missing.');
+        return;
+    }
+
+    const { SUPABASE_URL, SUPABASE_ANON_KEY } = SUPABASE_CONFIG;
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        console.warn('Supabase config is missing. Leaderboards are disabled.');
+        return;
+    }
+
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+function normalizeNickname(input) {
+    return String(input || '').trim().replace(/\s+/g, ' ');
+}
+
+function validateNickname(rawNickname) {
+    const nickname = normalizeNickname(rawNickname);
+    if (!nickname) return { valid: false, nickname, message: 'Nickname is required.' };
+    if (nickname.length < 3 || nickname.length > 16) {
+        return { valid: false, nickname, message: 'Nickname must be 3-16 characters.' };
+    }
+    if (!/^[A-Za-z0-9 _-]+$/.test(nickname)) {
+        return { valid: false, nickname, message: 'Use letters, numbers, spaces, underscore, or hyphen only.' };
+    }
+    if (RESERVED_NICKNAMES.has(nickname.toLowerCase())) {
+        return { valid: false, nickname, message: 'This nickname is reserved.' };
+    }
+
+    return { valid: true, nickname, message: '' };
+}
+
+function onSaveNickname() {
+    const result = validateNickname(nicknameInput.value);
+    if (!result.valid) {
+        setNicknameError(result.message);
+        return;
+    }
+
+    playerNickname = result.nickname;
+    localStorage.setItem(NICKNAME_KEY, playerNickname);
+    sessionStorage.setItem(NICKNAME_SESSION_KEY, '1');
+    nicknameInput.value = playerNickname;
+    setNicknameError('');
+    updateNicknameUI();
+}
+
+function onChangeNickname() {
+    sessionStorage.removeItem(NICKNAME_SESSION_KEY);
+    nicknameInput.focus();
+    nicknameInput.select();
+}
+
+function ensureNicknameReady() {
+    const hasSessionConfirmation = sessionStorage.getItem(NICKNAME_SESSION_KEY) === '1';
+    if (playerNickname && hasSessionConfirmation) {
+        return true;
+    }
+
+    const result = validateNickname(nicknameInput.value || playerNickname);
+    if (!result.valid) {
+        setNicknameError(result.message);
+        nicknameInput.focus();
+        return false;
+    }
+
+    playerNickname = result.nickname;
+    localStorage.setItem(NICKNAME_KEY, playerNickname);
+    sessionStorage.setItem(NICKNAME_SESSION_KEY, '1');
+    updateNicknameUI();
+    return true;
+}
+
+function setNicknameError(message) {
+    if (!nicknameError) return;
+    if (message) {
+        nicknameError.textContent = message;
+        nicknameError.classList.remove('is-hidden');
+    } else {
+        nicknameError.textContent = '';
+        nicknameError.classList.add('is-hidden');
+    }
+}
+
+function updateNicknameUI() {
+    if (currentNicknameElement) {
+        currentNicknameElement.textContent = playerNickname || 'Not set';
+    }
+
+    if (startBtn) {
+        startBtn.disabled = !playerNickname;
+        startBtn.style.opacity = playerNickname ? '1' : '0.55';
+        startBtn.style.cursor = playerNickname ? 'pointer' : 'not-allowed';
+    }
+}
+
+function getTodayUtc() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function isScoreValid(value) {
+    return Number.isInteger(value) && value >= 0 && value <= MAX_SAFE_SCORE;
+}
+
+async function submitScoreIfEligible() {
+    if (hasPendingScoreSubmission) return;
+    if (!supabaseClient) {
+        setSubmitStatus('Leaderboard offline: Supabase is not configured.', false);
+        return;
+    }
+    if (!playerNickname) {
+        setSubmitStatus('Set a nickname to submit scores.', false);
+        return;
+    }
+    if (!isScoreValid(score)) {
+        setSubmitStatus('Score rejected: invalid value.', false);
+        return;
+    }
+
+    const now = Date.now();
+    if (now - lastSubmitTs < SCORE_SUBMIT_COOLDOWN_MS) {
+        setSubmitStatus('Please wait a moment before submitting another score.', false);
+        return;
+    }
+
+    const payload = {
+        nickname: playerNickname,
+        score: score,
+        mode: gameMode,
+        score_date_utc: getTodayUtc()
+    };
+
+    pendingScorePayload = payload;
+    hasPendingScoreSubmission = true;
+    setSubmitStatus('Submitting score...', true);
+    retrySubmitBtn.classList.add('is-hidden');
+
+    try {
+        const { error } = await supabaseClient.from('scores').insert(payload);
+        if (error) throw error;
+        lastSubmitTs = Date.now();
+        setSubmitStatus('Score submitted to leaderboard.', true);
+        await loadLeaderboards();
+    } catch (err) {
+        const message = err && err.message ? err.message : 'Unable to submit score.';
+        setSubmitStatus(`Submit failed: ${message}`, false);
+        retrySubmitBtn.classList.remove('is-hidden');
+    } finally {
+        hasPendingScoreSubmission = false;
+    }
+}
+
+async function retryLastSubmission() {
+    if (!pendingScorePayload || !supabaseClient || hasPendingScoreSubmission) return;
+
+    hasPendingScoreSubmission = true;
+    setSubmitStatus('Retrying score submit...', true);
+    retrySubmitBtn.classList.add('is-hidden');
+
+    try {
+        const { error } = await supabaseClient.from('scores').insert(pendingScorePayload);
+        if (error) throw error;
+        lastSubmitTs = Date.now();
+        setSubmitStatus('Score submitted to leaderboard.', true);
+        await loadLeaderboards();
+    } catch (err) {
+        const message = err && err.message ? err.message : 'Retry failed.';
+        setSubmitStatus(`Submit failed: ${message}`, false);
+        retrySubmitBtn.classList.remove('is-hidden');
+    } finally {
+        hasPendingScoreSubmission = false;
+    }
+}
+
+function setSubmitStatus(message, success = true) {
+    if (!submitStatus) return;
+    submitStatus.textContent = message || '';
+    submitStatus.style.opacity = message ? '0.85' : '0';
+    submitStatus.style.color = success ? '' : '#fb7185';
+}
+
+function switchLeaderboardTab(tab) {
+    const isDaily = tab === 'daily';
+    dailyTabBtn.classList.toggle('active', isDaily);
+    alltimeTabBtn.classList.toggle('active', !isDaily);
+    dailyLeaderboardList.classList.toggle('is-hidden', !isDaily);
+    alltimeLeaderboardList.classList.toggle('is-hidden', isDaily);
+}
+
+function renderLeaderboard(listElement, entries) {
+    listElement.innerHTML = '';
+
+    if (!entries || entries.length === 0) {
+        const empty = document.createElement('li');
+        empty.textContent = 'No scores yet.';
+        empty.className = 'leaderboard-empty';
+        listElement.appendChild(empty);
+        return;
+    }
+
+    entries.forEach((entry, index) => {
+        const li = document.createElement('li');
+        const rank = entry.rank || index + 1;
+        const nickname = entry.nickname || 'Unknown';
+        const entryScore = Number.isFinite(entry.score) ? entry.score : 0;
+        li.innerHTML = `<span>#${rank} ${nickname}</span><strong>${entryScore}</strong>`;
+        if (playerNickname && nickname.toLowerCase() === playerNickname.toLowerCase()) {
+            li.classList.add('current-player');
+        }
+        listElement.appendChild(li);
+    });
+}
+
+async function loadLeaderboards() {
+    if (!leaderboardStatus) return;
+    if (!supabaseClient) {
+        leaderboardStatus.textContent = 'Set Supabase config to enable leaderboards.';
+        renderLeaderboard(dailyLeaderboardList, []);
+        renderLeaderboard(alltimeLeaderboardList, []);
+        return;
+    }
+
+    leaderboardStatus.textContent = 'Loading leaderboard...';
+    const todayUtc = getTodayUtc();
+
+    try {
+        const [dailyResponse, allTimeResponse] = await Promise.all([
+            supabaseClient
+                .from('daily_leaderboard')
+                .select('*')
+                .eq('score_date_utc', todayUtc)
+                .order('rank', { ascending: true })
+                .limit(10),
+            supabaseClient
+                .from('all_time_leaderboard')
+                .select('*')
+                .order('rank', { ascending: true })
+                .limit(50)
+        ]);
+
+        if (dailyResponse.error) throw dailyResponse.error;
+        if (allTimeResponse.error) throw allTimeResponse.error;
+
+        renderLeaderboard(dailyLeaderboardList, dailyResponse.data || []);
+        renderLeaderboard(alltimeLeaderboardList, allTimeResponse.data || []);
+        leaderboardStatus.textContent = 'Leaderboard updated.';
+    } catch (err) {
+        const message = err && err.message ? err.message : 'Unable to load leaderboard.';
+        leaderboardStatus.textContent = `Leaderboard error: ${message}`;
+        renderLeaderboard(dailyLeaderboardList, []);
+        renderLeaderboard(alltimeLeaderboardList, []);
+    }
+}
+
 function initializeEntrySplash() {
+    initializeBackend();
+    playerNickname = normalizeNickname(localStorage.getItem(NICKNAME_KEY) || '');
+    if (playerNickname) {
+        nicknameInput.value = playerNickname;
+    }
+    setNicknameError('');
+    updateNicknameUI();
+    switchLeaderboardTab('daily');
+    loadLeaderboards();
+
     startScreen.classList.remove('active');
     startScreen.classList.add('hidden');
     showSplash({

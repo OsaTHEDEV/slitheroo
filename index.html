@@ -80,6 +80,18 @@
     <div id="start-screen" class="overlay active">
         <div class="menu-card">
             <h2>Ready?</h2>
+            <div class="nickname-panel">
+                <label for="nickname-input" class="nickname-label">Nickname</label>
+                <div class="nickname-input-row">
+                    <input id="nickname-input" type="text" maxlength="16" placeholder="Enter nickname" autocomplete="off">
+                    <button id="save-nickname-btn" class="glass-btn small-pill">SAVE</button>
+                </div>
+                <p id="nickname-error" class="inline-error is-hidden">Nickname is required.</p>
+                <div class="nickname-current">
+                    <span>Playing as: <strong id="current-nickname">Not set</strong></span>
+                    <button id="change-nickname-btn" class="glass-btn tiny">CHANGE</button>
+                </div>
+            </div>
             <div class="mode-selection">
                 <button class="mode-btn active" data-mode="RANKED">RANKED</button>
                 <button class="mode-btn" data-mode="ZEN">ZEN</button>
@@ -96,6 +108,15 @@
                 <button id="start-btn" class="glow-btn">START GAME</button>
                 <button id="customize-btn" class="glass-btn">CUSTOMIZE</button>
             </div>
+            <section class="leaderboard-panel" aria-label="Leaderboards">
+                <div class="leaderboard-tabs">
+                    <button id="lb-tab-daily" class="lb-tab active" type="button">Daily Top 10</button>
+                    <button id="lb-tab-alltime" class="lb-tab" type="button">All-Time Top 50</button>
+                </div>
+                <p id="leaderboard-status" class="leaderboard-status">Loading leaderboard...</p>
+                <ol id="daily-leaderboard-list" class="leaderboard-list"></ol>
+                <ol id="alltime-leaderboard-list" class="leaderboard-list is-hidden"></ol>
+            </section>
             <p class="start-menu-copy">Slitheroo is a free browser snake game with Ranked and Zen modes, dynamic obstacles, arena expansion, skins, and daily challenges. No downloads - play now on desktop.</p>
         </div>
     </div>
@@ -208,10 +229,18 @@
                 <button id="restart-btn" class="glow-btn">ONE MORE BITE</button>
                 <button id="main-menu-btn" class="glass-btn">MAIN MENU</button>
             </div>
+            <p id="submit-status" class="subtle-text status-text"></p>
+            <button id="retry-submit-btn" class="glass-btn small is-hidden">RETRY SUBMIT</button>
         </div>
     </div>
 
-
+    <script>
+        window.SLITHEROO_CONFIG = window.SLITHEROO_CONFIG || {
+            SUPABASE_URL: '',
+            SUPABASE_ANON_KEY: ''
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 </body>
 
