@@ -1,978 +1,145 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const scoreElement = document.getElementById('score');
-const levelElement = document.getElementById('level');
-const highScoreElement = document.getElementById('high-score');
-const startScreen = document.getElementById('start-screen');
-const gameOverScreen = document.getElementById('game-over-screen');
-const customizeScreen = document.getElementById('customize-screen');
-const gameOverTitle = document.querySelector('#game-over-screen .danger-text');
-const summaryScore = document.getElementById('summary-score');
-const summaryLevel = document.getElementById('summary-level');
-const summaryLength = document.getElementById('summary-length');
-const summaryOccupancy = document.getElementById('summary-occupancy');
-const summaryMode = document.getElementById('summary-mode');
-const summaryBestOccupancy = document.getElementById('summary-best-occupancy');
-
-const pauseScreen = document.getElementById('pause-screen');
-const pauseBtn = document.getElementById('pause-btn');
-const resumeBtn = document.getElementById('resume-btn');
-const pauseMainMenuBtn = document.getElementById('pause-main-menu-btn');
-
-const startBtn = document.getElementById('start-btn');
-const restartBtn = document.getElementById('restart-btn');
-const mainMenuBtn = document.getElementById('main-menu-btn');
-const mainHomeBtn = document.getElementById('main-home-btn');
-const customizeBtn = document.getElementById('customize-btn');
-const backToMenuBtn = document.getElementById('back-to-menu-btn');
-const modeBtns = document.querySelectorAll('.mode-btn');
-const modeDesc = document.getElementById('mode-desc');
-const skinOptions = document.querySelectorAll('#skins-grid .option');
-const themeOptions = document.querySelectorAll('#themes-grid .option');
-const zenObstaclesToggle = document.getElementById('zen-obstacles-toggle');
-const diffBtns = document.querySelectorAll('.diff-btn');
-const splashScreen = document.getElementById('splash-screen');
-const splashTitle = document.getElementById('splash-title');
-const splashSubtitle = document.getElementById('splash-subtitle');
-const nicknameInput = document.getElementById('nickname-input');
-const saveNicknameBtn = document.getElementById('save-nickname-btn');
-const changeNicknameBtn = document.getElementById('change-nickname-btn');
-const nicknameError = document.getElementById('nickname-error');
-const currentNicknameElement = document.getElementById('current-nickname');
-const leaderboardStatus = document.getElementById('leaderboard-status');
-const dailyLeaderboardList = document.getElementById('daily-leaderboard-list');
-const alltimeLeaderboardList = document.getElementById('alltime-leaderboard-list');
-const dailyTabBtn = document.getElementById('lb-tab-daily');
-const alltimeTabBtn = document.getElementById('lb-tab-alltime');
-const submitStatus = document.getElementById('submit-status');
-const retrySubmitBtn = document.getElementById('retry-submit-btn');
-
-// Game Constants
-const TILE_SIZE = 20;
-let TILE_COUNT = canvas.width / TILE_SIZE;
-const GAME_SPEED_START = 100;
-const SPEED_DECREMENT = 2;
-
-// Game State
-let score = 0;
-let level = 1;
-let highScore = localStorage.getItem('snakeHighScore') || 0;
-let snake = [];
-let food = { x: 0, y: 0 };
-let obstacles = [];
-let dx = 0;
-let dy = 0;
-let gameMode = 'RANKED'; // 'RANKED' or 'ZEN'
-let bestOccupancy = localStorage.getItem('snakeBestOccupancy') || 0;
-let currentSkin = 'neon';
-let currentTheme = 'default';
-let currentSpeed = GAME_SPEED_START;
-let gameDifficulty = 'NORMAL'; // 'NORMAL', 'HARD'
-let isPlaying = false;
-let isPaused = false;
-let lastObstacleMoveTime = 0;
-const OBSTACLE_MOVE_INTERVAL = 600; // ms
-let zenShowObstacles = false;
-let arenaExpanded = false;
-const MAX_ARENA_SIZE = 600;
-const DEFAULT_GAME_OVER_TITLE = 'GAME OVER';
-const DEFAULT_SPLASH_TITLE = 'SLITHEROO';
-const DEFAULT_SPLASH_SUBTITLE = 'Enter the neon arena.';
-let splashTimerId = null;
-let playerNickname = '';
-let supabaseClient = null;
-let hasPendingScoreSubmission = false;
-let lastSubmitTs = 0;
-let pendingScorePayload = null;
-const MAX_SAFE_SCORE = 1000000;
-const SCORE_SUBMIT_COOLDOWN_MS = 3000;
-const NICKNAME_KEY = 'slitherooNickname';
-const NICKNAME_SESSION_KEY = 'slitherooSessionNicknameConfirmed';
-const RESERVED_NICKNAMES = new Set(['anonymous']);
-const SUPABASE_CONFIG = window.SLITHEROO_CONFIG || { SUPABASE_URL: '', SUPABASE_ANON_KEY: '' };
-
-// Initialize High Score Display
-highScoreElement.textContent = highScore;
-
-// Event Listeners
-document.addEventListener('keydown', changeDirection);
-startBtn.addEventListener('click', startGame);
-restartBtn.addEventListener('click', startGame);
-pauseBtn.addEventListener('click', togglePause);
-resumeBtn.addEventListener('click', resumeGame);
-mainMenuBtn.addEventListener('click', goToMainMenu);
-pauseMainMenuBtn.addEventListener('click', goToMainMenu);
-mainHomeBtn.addEventListener('click', goToMainMenu);
-customizeBtn.addEventListener('click', showCustomization);
-backToMenuBtn.addEventListener('click', hideCustomization);
-saveNicknameBtn.addEventListener('click', onSaveNickname);
-changeNicknameBtn.addEventListener('click', onChangeNickname);
-nicknameInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') onSaveNickname();
-});
-dailyTabBtn.addEventListener('click', () => switchLeaderboardTab('daily'));
-alltimeTabBtn.addEventListener('click', () => switchLeaderboardTab('alltime'));
-retrySubmitBtn.addEventListener('click', retryLastSubmission);
-
-modeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        modeBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        gameMode = btn.dataset.mode;
-
-        if (gameMode === 'RANKED') {
-            modeDesc.textContent = "Traditional Snake. Walls are deadly.";
-        } else {
-            modeDesc.textContent = "Relaxed mode. Walls wrap around.";
-        }
-    });
-});
-
-skinOptions.forEach(opt => {
-    opt.addEventListener('click', () => {
-        skinOptions.forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-        currentSkin = opt.dataset.skin;
-    });
-});
-
-themeOptions.forEach(opt => {
-    opt.addEventListener('click', () => {
-        themeOptions.forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-        currentTheme = opt.dataset.theme;
-        document.body.setAttribute('data-theme', currentTheme);
-    });
-});
-
-zenObstaclesToggle.addEventListener('change', (e) => {
-    zenShowObstacles = e.target.checked;
-});
-
-diffBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        diffBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        gameDifficulty = btn.dataset.diff;
-    });
-});
-
-function showCustomization() {
-    startScreen.classList.remove('active');
-    startScreen.classList.add('hidden');
-    customizeScreen.classList.remove('hidden');
-    customizeScreen.classList.add('active');
-}
-
-function hideCustomization() {
-    customizeScreen.classList.remove('active');
-    customizeScreen.classList.add('hidden');
-    startScreen.classList.remove('hidden');
-    startScreen.classList.add('active');
-}
-
-function showSplash(options = {}) {
-    if (!splashScreen) {
-        if (typeof options.onComplete === 'function') options.onComplete();
-        return;
-    }
-
-    const title = options.title || DEFAULT_SPLASH_TITLE;
-    const subtitle = options.subtitle || DEFAULT_SPLASH_SUBTITLE;
-    const duration = typeof options.duration === 'number' ? options.duration : 1300;
-
-    if (splashTimerId) {
-        clearTimeout(splashTimerId);
-        splashTimerId = null;
-    }
-
-    splashTitle.textContent = title;
-    splashSubtitle.textContent = subtitle;
-    splashScreen.classList.remove('hidden');
-    splashScreen.classList.add('active');
-
-    splashTimerId = setTimeout(() => {
-        splashScreen.classList.remove('active');
-        splashScreen.classList.add('hidden');
-        splashTimerId = null;
-
-        if (typeof options.onComplete === 'function') options.onComplete();
-    }, duration);
-}
-
-function startGame(showTransition = true) {
-    if (!ensureNicknameReady()) {
-        return;
-    }
-
-    if (showTransition) {
-        showSplash({
-            title: 'GET READY',
-            subtitle: `${gameMode} mode - ${gameDifficulty}`,
-            duration: 900,
-            onComplete: () => startGame(false)
-        });
-        return;
-    }
-
-    resetGameOverTitle();
-    resetGame();
-    startScreen.classList.remove('active');
-    startScreen.classList.add('hidden');
-    gameOverScreen.classList.remove('active');
-    gameOverScreen.classList.add('hidden');
-    pauseScreen.classList.remove('active');
-    pauseScreen.classList.add('hidden');
-    isPlaying = true;
-    isPaused = false;
-    gameLoop();
-}
-
-function togglePause() {
-    if (!isPlaying) return;
-    isPaused = !isPaused;
-
-    if (isPaused) {
-        populateSummary('pause');
-        pauseScreen.classList.remove('hidden');
-        pauseScreen.classList.add('active');
-    } else {
-        resumeGame();
-    }
-}
-
-function resumeGame() {
-    isPaused = false;
-    pauseScreen.classList.remove('active');
-    pauseScreen.classList.add('hidden');
-    gameLoop(); // Restart the loop after unpausing
-}
-
-function resetGame() {
-    score = 0;
-    level = 1;
-    currentSpeed = GAME_SPEED_START;
-    obstacles = [];
-    lastObstacleMoveTime = 0;
-
-    // Reset arena before food generation so spawn uses the current board size.
-    canvas.width = 400;
-    canvas.height = 400;
-    TILE_COUNT = canvas.width / TILE_SIZE;
-    arenaExpanded = false;
-
-    scoreElement.textContent = score;
-    levelElement.textContent = level;
-    snake = [
-        { x: 10, y: 10 },
-        { x: 9, y: 10 },
-        { x: 8, y: 10 }
-    ];
-    dx = 1;
-    dy = 0;
-    generateFood();
-    isPaused = false;
-}
-
-function gameLoop() {
-    if (!isPlaying || isPaused) return;
-
-    setTimeout(gameLoop, currentSpeed);
-
-    moveSnake();
-
-    if (didGameEnd()) {
-        endGame();
-        return;
-    }
-
-    clearCanvas();
-    drawFood();
-    if (gameMode === 'RANKED' || (gameMode === 'ZEN' && zenShowObstacles)) {
-        drawObstacles();
-        const now = Date.now();
-        if (level >= 10 && now - lastObstacleMoveTime > OBSTACLE_MOVE_INTERVAL) {
-            moveObstacles();
-            lastObstacleMoveTime = now;
-        }
-    }
-    drawSnake();
-    checkArenaExpansion();
-}
-
-function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function moveSnake() {
-    let headX = snake[0].x + dx;
-    let headY = snake[0].y + dy;
-
-    if (gameMode === 'ZEN') {
-        if (headX < 0) headX = TILE_COUNT - 1;
-        if (headX >= TILE_COUNT) headX = 0;
-        if (headY < 0) headY = TILE_COUNT - 1;
-        if (headY >= TILE_COUNT) headY = 0;
-    }
-
-    const head = { x: headX, y: headY };
-    snake.unshift(head);
-
-    if (head.x === food.x && head.y === food.y) {
-        score += 10;
-        scoreElement.textContent = score;
-        checkLevelUp();
-        generateFood();
-    } else {
-        snake.pop();
-    }
-}
-
-function moveObstacles() {
-    obstacles.forEach(obs => {
-        const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-        const [mx, my] = dirs[Math.floor(Math.random() * dirs.length)];
-        const nextX = (obs.x + mx + TILE_COUNT) % TILE_COUNT;
-        const nextY = (obs.y + my + TILE_COUNT) % TILE_COUNT;
-
-        const occupied = snake.some(p => p.x === nextX && p.y === nextY) ||
-            (food.x === nextX && food.y === nextY) ||
-            obstacles.some(o => o !== obs && o.x === nextX && o.y === nextY);
-
-        if (!occupied) {
-            obs.x = nextX;
-            obs.y = nextY;
-        }
-    });
-}
-
-function generateFood() {
-    const isFoodPositionValid = (x, y) => {
-        const isCollision = (obj) => obj.x === x && obj.y === y;
-        let adjacentObstacles = 0;
-        const neighbors = [
-            { x: x + 1, y: y },
-            { x: x - 1, y: y },
-            { x: x, y: y + 1 },
-            { x: x, y: y - 1 }
-        ];
-
-        neighbors.forEach(n => {
-            // Treat walls in RANKED as obstacles
-            if (gameMode === 'RANKED') {
-                if (n.x < 0 || n.x >= TILE_COUNT || n.y < 0 || n.y >= TILE_COUNT) {
-                    adjacentObstacles++;
-                    return;
-                }
-            }
-            // Check for actual obstacles
-            if (obstacles.some(obs => obs.x === n.x && obs.y === n.y)) {
-                adjacentObstacles++;
-            }
-        });
-
-        const isTrapped = adjacentObstacles >= 3;
-        return !(
-            snake.some(isCollision) ||
-            ((gameMode === 'RANKED' || (gameMode === 'ZEN' && zenShowObstacles)) && obstacles.some(isCollision)) ||
-            isTrapped
-        );
-    };
-
-    const maxAttempts = TILE_COUNT * TILE_COUNT * 2;
-
-    for (let attempts = 0; attempts < maxAttempts; attempts++) {
-        const candidateX = Math.floor(Math.random() * TILE_COUNT);
-        const candidateY = Math.floor(Math.random() * TILE_COUNT);
-        if (isFoodPositionValid(candidateX, candidateY)) {
-            food.x = candidateX;
-            food.y = candidateY;
-            return true;
-        }
-    }
-
-    // Deterministic fallback if random attempts fail in dense boards.
-    for (let y = 0; y < TILE_COUNT; y++) {
-        for (let x = 0; x < TILE_COUNT; x++) {
-            if (isFoodPositionValid(x, y)) {
-                food.x = x;
-                food.y = y;
-                return true;
-            }
-        }
-    }
-
-    // No valid tile remains: end as a win state instead of hanging.
-    if (isPlaying) victory();
-    return false;
-}
-
-function checkLevelUp() {
-    let threshold = 50;
-    if (gameDifficulty === 'HARD') threshold = 100;
-
-    const newLevel = Math.floor(score / threshold) + 1;
-    if (newLevel > level) {
-        level = newLevel;
-        levelElement.textContent = level;
-
-        // Linear speed increase
-        currentSpeed = Math.max(30, GAME_SPEED_START - ((level - 1) * SPEED_DECREMENT));
-
-        // Level Up Notification
-        showLevelNotice(`LEVEL ${level}`);
-
-        // Dynamic Theme/Color progression
-        updateLevelTheme();
-
-        if (gameMode === 'RANKED' || (gameMode === 'ZEN' && zenShowObstacles)) generateObstacles();
-    }
-}
-
-function updateLevelTheme() {
-    const themes = ['default', 'cyberpunk', 'classic', 'sunset'];
-    const themeIndex = (level - 1) % themes.length;
-    currentTheme = themes[themeIndex];
-    document.body.setAttribute('data-theme', currentTheme);
-
-    // Also shift hue slightly within each theme for extra variety
-    const hueRotate = (level - 1) * 15; // 15 degrees per level
-    document.documentElement.style.setProperty('--level-hue', `${hueRotate}deg`);
-    document.body.setAttribute('data-level', level);
-}
-
-function showLevelNotice(text) {
-    const notice = document.createElement('div');
-    notice.className = 'level-notice';
-    notice.textContent = text;
-    document.querySelector('.canvas-wrapper').appendChild(notice);
-
-    setTimeout(() => notice.classList.add('fade-out'), 800);
-    setTimeout(() => notice.remove(), 1200);
-}
-
-function generateObstacles() {
-    const head = snake[0];
-    const isTooCloseToHead = (x, y) => Math.abs(x - head.x) < 3 && Math.abs(y - head.y) < 3;
-    let safeFreeCells = 0;
-
-    for (let y = 0; y < TILE_COUNT; y++) {
-        for (let x = 0; x < TILE_COUNT; x++) {
-            const occupied = snake.some(p => p.x === x && p.y === y) ||
-                (food.x === x && food.y === y) ||
-                obstacles.some(o => o.x === x && o.y === y);
-
-            if (!occupied && !isTooCloseToHead(x, y)) {
-                safeFreeCells++;
-            }
-        }
-    }
-
-    const desiredObstacleCount = Math.min(level - 1, obstacles.length + safeFreeCells);
-    const maxAttempts = TILE_COUNT * TILE_COUNT * 3;
-    let attempts = 0;
-
-    while (obstacles.length < desiredObstacleCount && attempts < maxAttempts) {
-        attempts++;
-        const obstacle = {
-            x: Math.floor(Math.random() * TILE_COUNT),
-            y: Math.floor(Math.random() * TILE_COUNT)
-        };
-
-        const occupied = snake.some(p => p.x === obstacle.x && p.y === obstacle.y) ||
-            (food.x === obstacle.x && food.y === obstacle.y) ||
-            obstacles.some(o => o.x === obstacle.x && o.y === obstacle.y);
-
-        if (!isTooCloseToHead(obstacle.x, obstacle.y) && !occupied) {
-            obstacles.push(obstacle);
-        }
-    }
-}
-
-function drawObstacles() {
-    ctx.fillStyle = '#ff3366';
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = '#ff3366';
-    obstacles.forEach(obs => {
-        ctx.fillRect(obs.x * TILE_SIZE, obs.y * TILE_SIZE, TILE_SIZE - 2, TILE_SIZE - 2);
-    });
-    ctx.shadowBlur = 0;
-}
-
-function drawSnake() {
-    snake.forEach((part, index) => {
-        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--snake-color').trim() || '#00ff88';
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = ctx.fillStyle;
-
-        if (index === 0) {
-            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--snake-head').trim() || '#ccffdd';
-        }
-
-        // Apply Skins
-        if (currentSkin === 'striped' && index % 2 === 0 && index !== 0) {
-            ctx.globalAlpha = 0.7;
-        } else if (currentSkin === 'glow') {
-            ctx.shadowBlur = 25;
-        } else if (currentSkin === 'gradient') {
-            ctx.globalAlpha = 1 - (index / snake.length) * 0.5;
-        }
-
-        ctx.fillRect(part.x * TILE_SIZE, part.y * TILE_SIZE, TILE_SIZE - 2, TILE_SIZE - 2);
-        ctx.globalAlpha = 1.0;
-        ctx.shadowBlur = 0;
-    });
-}
-
-function drawFood() {
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--food-color').trim() || '#ff0055';
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = ctx.fillStyle;
-    ctx.beginPath();
-    ctx.arc(food.x * TILE_SIZE + TILE_SIZE / 2, food.y * TILE_SIZE + TILE_SIZE / 2, TILE_SIZE / 2 - 2, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-}
-
-function changeDirection(event) {
-    const key = event.key;
-    const normalizedKey = typeof key === 'string' ? key.toLowerCase() : '';
-
-    // Handle Pause Toggle (P or Escape)
-    if (key === 'Escape' || normalizedKey === 'p') {
-        togglePause();
-        return;
-    }
-
-    const directions = {
-        ArrowLeft: [-1, 0],
-        ArrowRight: [1, 0],
-        ArrowUp: [0, -1],
-        ArrowDown: [0, 1],
-        a: [-1, 0],
-        d: [1, 0],
-        w: [0, -1],
-        s: [0, 1]
-    };
-
-    const direction = directions[key] || directions[normalizedKey];
-    if (!direction) return;
-
-    const [newDx, newDy] = direction;
-    if (newDx === -dx && newDy === -dy) return;
-    dx = newDx; dy = newDy;
-}
-
-function didGameEnd() {
-    const head = snake[0];
-    if (gameMode === 'RANKED' || (gameMode === 'ZEN' && zenShowObstacles)) {
-        if (head.x < 0 || head.x >= TILE_COUNT || head.y < 0 || head.y >= TILE_COUNT) {
-            if (gameMode === 'RANKED') return true;
-        }
-        if (obstacles.some(obs => obs.x === head.x && obs.y === head.y)) return true;
-    }
-    for (let i = 4; i < snake.length; i++) {
-        if (snake[i].x === head.x && snake[i].y === head.y) return true;
-    }
-    return false;
-}
-
-function endGame() {
-    isPlaying = false;
-    hasPendingScoreSubmission = false;
-
-    const gameData = {
-        score: score,
-        level: level,
-        mode: gameMode,
-        skin: currentSkin,
-        theme: currentTheme,
-        timestamp: new Date().toISOString()
-    };
-    console.log("Game Session Data:", gameData);
-    // This object is ready for future leaderboard/API integration
-
-    if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('snakeHighScore', highScore);
-        highScoreElement.textContent = highScore;
-    }
-
-    populateSummary('summary');
-
-    gameOverScreen.classList.remove('hidden');
-    gameOverScreen.classList.add('active');
-    submitScoreIfEligible();
-}
-
-function populateSummary(prefix) {
-    const totalTiles = TILE_COUNT * TILE_COUNT;
-    const occupancyVal = (snake.length / totalTiles) * 100;
-    const occupancyText = occupancyVal.toFixed(1) + '%';
-
-    if (occupancyVal > bestOccupancy) {
-        bestOccupancy = occupancyVal;
-        localStorage.setItem('snakeBestOccupancy', bestOccupancy);
-    }
-    const bestOccupancyText = parseFloat(bestOccupancy).toFixed(1) + '%';
-
-    const scoreElem = document.getElementById(`${prefix}-score`);
-    const levelElem = document.getElementById(`${prefix}-level`);
-    const lengthElem = document.getElementById(`${prefix}-length`);
-    const occupancyElem = document.getElementById(`${prefix}-occupancy`);
-    const modeElem = document.getElementById(`${prefix}-mode`);
-    const bestElem = document.getElementById(`${prefix}-best-occupancy`);
-
-    if (scoreElem) scoreElem.textContent = score;
-    if (levelElem) levelElem.textContent = level;
-    if (lengthElem) lengthElem.textContent = snake.length;
-    if (occupancyElem) occupancyElem.textContent = occupancyText;
-    if (modeElem) modeElem.textContent = gameMode;
-    if (bestElem) bestElem.textContent = bestOccupancyText;
-}
-
-function goToMainMenu(showTransition = true) {
-    if (showTransition) {
-        showSplash({
-            title: 'MAIN MENU',
-            subtitle: 'Tune settings and launch another run.',
-            duration: 850,
-            onComplete: () => goToMainMenu(false)
-        });
-        return;
-    }
-
-    gameOverScreen.classList.remove('active');
-    gameOverScreen.classList.add('hidden');
-    customizeScreen.classList.remove('active');
-    customizeScreen.classList.add('hidden');
-    pauseScreen.classList.remove('active');
-    pauseScreen.classList.add('hidden');
-    startScreen.classList.remove('hidden');
-    startScreen.classList.add('active');
-    isPlaying = false;
-    isPaused = false;
-    resetGame(); // Prepare for next session
-    setSubmitStatus('');
-    loadLeaderboards();
-}
-
-function checkArenaExpansion() {
-    const totalTiles = TILE_COUNT * TILE_COUNT;
-    const occupancy = snake.length / totalTiles;
-
-    if (!arenaExpanded && occupancy > 0.8) {
-        expandArena();
-    } else if (arenaExpanded && occupancy > 0.95) {
-        victory();
-    }
-}
-
-function expandArena() {
-    arenaExpanded = true;
-    canvas.width = MAX_ARENA_SIZE;
-    canvas.height = MAX_ARENA_SIZE;
-    TILE_COUNT = canvas.width / TILE_SIZE;
-    showLevelNotice("ARENA EXPANDED!");
-}
-
-function victory() {
-    isPlaying = false;
-    showLevelNotice("ULTIMATE VICTORY!");
-    setTimeout(() => {
-        endGame();
-        if (gameOverTitle) {
-            gameOverTitle.textContent = "YOU WON!";
-            gameOverTitle.style.color = "var(--snake-color)";
-        }
-    }, 2000);
-}
-
-function resetGameOverTitle() {
-    if (!gameOverTitle) return;
-    gameOverTitle.textContent = DEFAULT_GAME_OVER_TITLE;
-    gameOverTitle.style.color = '';
-}
-
-function initializeBackend() {
-    if (!window.supabase || !window.supabase.createClient) {
-        console.warn('Supabase client library missing.');
-        return;
-    }
-
-    const { SUPABASE_URL, SUPABASE_ANON_KEY } = SUPABASE_CONFIG;
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-        console.warn('Supabase config is missing. Leaderboards are disabled.');
-        return;
-    }
-
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
-
-function normalizeNickname(input) {
-    return String(input || '').trim().replace(/\s+/g, ' ');
-}
-
-function validateNickname(rawNickname) {
-    const nickname = normalizeNickname(rawNickname);
-    if (!nickname) return { valid: false, nickname, message: 'Nickname is required.' };
-    if (nickname.length < 3 || nickname.length > 16) {
-        return { valid: false, nickname, message: 'Nickname must be 3-16 characters.' };
-    }
-    if (!/^[A-Za-z0-9 _-]+$/.test(nickname)) {
-        return { valid: false, nickname, message: 'Use letters, numbers, spaces, underscore, or hyphen only.' };
-    }
-    if (RESERVED_NICKNAMES.has(nickname.toLowerCase())) {
-        return { valid: false, nickname, message: 'This nickname is reserved.' };
-    }
-
-    return { valid: true, nickname, message: '' };
-}
-
-function onSaveNickname() {
-    const result = validateNickname(nicknameInput.value);
-    if (!result.valid) {
-        setNicknameError(result.message);
-        return;
-    }
-
-    playerNickname = result.nickname;
-    localStorage.setItem(NICKNAME_KEY, playerNickname);
-    sessionStorage.setItem(NICKNAME_SESSION_KEY, '1');
-    nicknameInput.value = playerNickname;
-    setNicknameError('');
-    updateNicknameUI();
-}
-
-function onChangeNickname() {
-    sessionStorage.removeItem(NICKNAME_SESSION_KEY);
-    nicknameInput.focus();
-    nicknameInput.select();
-}
-
-function ensureNicknameReady() {
-    const hasSessionConfirmation = sessionStorage.getItem(NICKNAME_SESSION_KEY) === '1';
-    if (playerNickname && hasSessionConfirmation) {
-        return true;
-    }
-
-    const result = validateNickname(nicknameInput.value || playerNickname);
-    if (!result.valid) {
-        setNicknameError(result.message);
-        nicknameInput.focus();
-        return false;
-    }
-
-    playerNickname = result.nickname;
-    localStorage.setItem(NICKNAME_KEY, playerNickname);
-    sessionStorage.setItem(NICKNAME_SESSION_KEY, '1');
-    updateNicknameUI();
-    return true;
-}
-
-function setNicknameError(message) {
-    if (!nicknameError) return;
-    if (message) {
-        nicknameError.textContent = message;
-        nicknameError.classList.remove('is-hidden');
-    } else {
-        nicknameError.textContent = '';
-        nicknameError.classList.add('is-hidden');
-    }
-}
-
-function updateNicknameUI() {
-    if (currentNicknameElement) {
-        currentNicknameElement.textContent = playerNickname || 'Not set';
-    }
-
-    if (startBtn) {
-        startBtn.disabled = !playerNickname;
-        startBtn.style.opacity = playerNickname ? '1' : '0.55';
-        startBtn.style.cursor = playerNickname ? 'pointer' : 'not-allowed';
-    }
-}
-
-function getTodayUtc() {
-    return new Date().toISOString().slice(0, 10);
-}
-
-function isScoreValid(value) {
-    return Number.isInteger(value) && value >= 0 && value <= MAX_SAFE_SCORE;
-}
-
-async function submitScoreIfEligible() {
-    if (hasPendingScoreSubmission) return;
-    if (!supabaseClient) {
-        setSubmitStatus('Leaderboard offline: Supabase is not configured.', false);
-        return;
-    }
-    if (!playerNickname) {
-        setSubmitStatus('Set a nickname to submit scores.', false);
-        return;
-    }
-    if (!isScoreValid(score)) {
-        setSubmitStatus('Score rejected: invalid value.', false);
-        return;
-    }
-
-    const now = Date.now();
-    if (now - lastSubmitTs < SCORE_SUBMIT_COOLDOWN_MS) {
-        setSubmitStatus('Please wait a moment before submitting another score.', false);
-        return;
-    }
-
-    const payload = {
-        nickname: playerNickname,
-        score: score,
-        mode: gameMode,
-        score_date_utc: getTodayUtc()
-    };
-
-    pendingScorePayload = payload;
-    hasPendingScoreSubmission = true;
-    setSubmitStatus('Submitting score...', true);
-    retrySubmitBtn.classList.add('is-hidden');
-
-    try {
-        const { error } = await supabaseClient.from('scores').insert(payload);
-        if (error) throw error;
-        lastSubmitTs = Date.now();
-        setSubmitStatus('Score submitted to leaderboard.', true);
-        await loadLeaderboards();
-    } catch (err) {
-        const message = err && err.message ? err.message : 'Unable to submit score.';
-        setSubmitStatus(`Submit failed: ${message}`, false);
-        retrySubmitBtn.classList.remove('is-hidden');
-    } finally {
-        hasPendingScoreSubmission = false;
-    }
-}
-
-async function retryLastSubmission() {
-    if (!pendingScorePayload || !supabaseClient || hasPendingScoreSubmission) return;
-
-    hasPendingScoreSubmission = true;
-    setSubmitStatus('Retrying score submit...', true);
-    retrySubmitBtn.classList.add('is-hidden');
-
-    try {
-        const { error } = await supabaseClient.from('scores').insert(pendingScorePayload);
-        if (error) throw error;
-        lastSubmitTs = Date.now();
-        setSubmitStatus('Score submitted to leaderboard.', true);
-        await loadLeaderboards();
-    } catch (err) {
-        const message = err && err.message ? err.message : 'Retry failed.';
-        setSubmitStatus(`Submit failed: ${message}`, false);
-        retrySubmitBtn.classList.remove('is-hidden');
-    } finally {
-        hasPendingScoreSubmission = false;
-    }
-}
-
-function setSubmitStatus(message, success = true) {
-    if (!submitStatus) return;
-    submitStatus.textContent = message || '';
-    submitStatus.style.opacity = message ? '0.85' : '0';
-    submitStatus.style.color = success ? '' : '#fb7185';
-}
-
-function switchLeaderboardTab(tab) {
-    const isDaily = tab === 'daily';
-    dailyTabBtn.classList.toggle('active', isDaily);
-    alltimeTabBtn.classList.toggle('active', !isDaily);
-    dailyLeaderboardList.classList.toggle('is-hidden', !isDaily);
-    alltimeLeaderboardList.classList.toggle('is-hidden', isDaily);
-}
-
-function renderLeaderboard(listElement, entries) {
-    listElement.innerHTML = '';
-
-    if (!entries || entries.length === 0) {
-        const empty = document.createElement('li');
-        empty.textContent = 'No scores yet.';
-        empty.className = 'leaderboard-empty';
-        listElement.appendChild(empty);
-        return;
-    }
-
-    entries.forEach((entry, index) => {
-        const li = document.createElement('li');
-        const rank = entry.rank || index + 1;
-        const nickname = entry.nickname || 'Unknown';
-        const entryScore = Number.isFinite(entry.score) ? entry.score : 0;
-        li.innerHTML = `<span>#${rank} ${nickname}</span><strong>${entryScore}</strong>`;
-        if (playerNickname && nickname.toLowerCase() === playerNickname.toLowerCase()) {
-            li.classList.add('current-player');
-        }
-        listElement.appendChild(li);
-    });
-}
-
-async function loadLeaderboards() {
-    if (!leaderboardStatus) return;
-    if (!supabaseClient) {
-        leaderboardStatus.textContent = 'Set Supabase config to enable leaderboards.';
-        renderLeaderboard(dailyLeaderboardList, []);
-        renderLeaderboard(alltimeLeaderboardList, []);
-        return;
-    }
-
-    leaderboardStatus.textContent = 'Loading leaderboard...';
-    const todayUtc = getTodayUtc();
-
-    try {
-        const [dailyResponse, allTimeResponse] = await Promise.all([
-            supabaseClient
-                .from('daily_leaderboard')
-                .select('*')
-                .eq('score_date_utc', todayUtc)
-                .order('rank', { ascending: true })
-                .limit(10),
-            supabaseClient
-                .from('all_time_leaderboard')
-                .select('*')
-                .order('rank', { ascending: true })
-                .limit(50)
-        ]);
-
-        if (dailyResponse.error) throw dailyResponse.error;
-        if (allTimeResponse.error) throw allTimeResponse.error;
-
-        renderLeaderboard(dailyLeaderboardList, dailyResponse.data || []);
-        renderLeaderboard(alltimeLeaderboardList, allTimeResponse.data || []);
-        leaderboardStatus.textContent = 'Leaderboard updated.';
-    } catch (err) {
-        const message = err && err.message ? err.message : 'Unable to load leaderboard.';
-        leaderboardStatus.textContent = `Leaderboard error: ${message}`;
-        renderLeaderboard(dailyLeaderboardList, []);
-        renderLeaderboard(alltimeLeaderboardList, []);
-    }
-}
-
-function initializeEntrySplash() {
-    initializeBackend();
-    playerNickname = normalizeNickname(localStorage.getItem(NICKNAME_KEY) || '');
-    if (playerNickname) {
-        nicknameInput.value = playerNickname;
-    }
-    setNicknameError('');
-    updateNicknameUI();
-    switchLeaderboardTab('daily');
-    loadLeaderboards();
-
-    startScreen.classList.remove('active');
-    startScreen.classList.add('hidden');
-    showSplash({
-        title: DEFAULT_SPLASH_TITLE,
-        subtitle: 'Ranked and Zen snake action.',
-        duration: 1500,
-        onComplete: () => {
-            startScreen.classList.remove('hidden');
-            startScreen.classList.add('active');
-        }
-    });
-}
-
-initializeEntrySplash();
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+const canvasWrapper=document.getElementById('canvas-wrapper');
+const scoreElement=document.getElementById('score');
+const levelElement=document.getElementById('level');
+const highScoreElement=document.getElementById('high-score');
+const streakElement=document.getElementById('streak');
+const startScreen=document.getElementById('start-screen');
+const gameOverScreen=document.getElementById('game-over-screen');
+const customizeScreen=document.getElementById('customize-screen');
+const pauseScreen=document.getElementById('pause-screen');
+const pauseBtn=document.getElementById('pause-btn');
+const resumeBtn=document.getElementById('resume-btn');
+const pauseMainMenuBtn=document.getElementById('pause-main-menu-btn');
+const startBtn=document.getElementById('start-btn');
+const restartBtn=document.getElementById('restart-btn');
+const continueBtn=document.getElementById('continue-btn');
+const continueStatus=document.getElementById('continue-status');
+const mainMenuBtn=document.getElementById('main-menu-btn');
+const mainHomeBtn=document.getElementById('main-home-btn');
+const customizeBtn=document.getElementById('customize-btn');
+const backToMenuBtn=document.getElementById('back-to-menu-btn');
+const modeBtns=document.querySelectorAll('.mode-btn');
+const modeDesc=document.getElementById('mode-desc');
+const skinOptions=document.querySelectorAll('#skins-grid .option');
+const themeOptions=document.querySelectorAll('#themes-grid .option');
+const zenObstaclesToggle=document.getElementById('zen-obstacles-toggle');
+const diffBtns=document.querySelectorAll('.diff-btn');
+const splashScreen=document.getElementById('splash-screen');
+const splashTitle=document.getElementById('splash-title');
+const splashSubtitle=document.getElementById('splash-subtitle');
+const nicknameInput=document.getElementById('nickname-input');
+const saveNicknameBtn=document.getElementById('save-nickname-btn');
+const changeNicknameBtn=document.getElementById('change-nickname-btn');
+const nicknameError=document.getElementById('nickname-error');
+const currentNicknameElement=document.getElementById('current-nickname');
+const leaderboardStatus=document.getElementById('leaderboard-status');
+const dailyLeaderboardList=document.getElementById('daily-leaderboard-list');
+const alltimeLeaderboardList=document.getElementById('alltime-leaderboard-list');
+const dailyTabBtn=document.getElementById('lb-tab-daily');
+const alltimeTabBtn=document.getElementById('lb-tab-alltime');
+const submitStatus=document.getElementById('submit-status');
+const retrySubmitBtn=document.getElementById('retry-submit-btn');
+const pregameBestScore=document.getElementById('pregame-best-score');
+const pregameDailyRank=document.getElementById('pregame-daily-rank');
+const newHighScoreBadge=document.getElementById('new-high-score-badge');
+const joystickRoot=document.getElementById('joystick');
+const joystickThumb=document.getElementById('joystick-thumb');
+const joystickToggle=document.getElementById('joystick-toggle');
+
+const TILE_SIZE=20,DEFAULT_TILES=20,EXPANDED_TILES=30,GAME_SPEED_START=100,SPEED_DECREMENT=2,OBSTACLE_MOVE_INTERVAL=600,SWIPE_THRESHOLD=24,COMBO_WINDOW_MS=2500;
+const MAX_SAFE_SCORE=1000000,SCORE_SUBMIT_COOLDOWN_MS=3000;
+const NICKNAME_KEY='slitherooNickname',NICKNAME_SESSION_KEY='slitherooSessionNicknameConfirmed';
+const CONTINUE_DATE_KEY='slitherooContinueDateUtc',CONTINUE_COUNT_KEY='slitherooContinueCount',JOYSTICK_KEY='slitherooJoystickEnabled';
+const SUPABASE_CONFIG=window.SLITHEROO_CONFIG||{SUPABASE_URL:'',SUPABASE_ANON_KEY:''};
+const MAX_CONTINUES_PER_DAY=Number.isInteger(SUPABASE_CONFIG.MAX_CONTINUES_PER_DAY)?SUPABASE_CONFIG.MAX_CONTINUES_PER_DAY:1;
+window.onGameOver=window.onGameOver||function(){};
+
+let boardTiles=DEFAULT_TILES,score=0,level=1,displayScore=0,highScore=Number(localStorage.getItem('snakeHighScore')||0),bestOccupancy=Number(localStorage.getItem('snakeBestOccupancy')||0);
+let snake=[],food={x:0,y:0},obstacles=[],dx=1,dy=0,pendingDirection=null;
+let gameMode='RANKED',currentSkin='neon',currentTheme='default',gameDifficulty='NORMAL',currentSpeed=GAME_SPEED_START;
+let isPlaying=false,isPaused=false,arenaExpanded=false,zenShowObstacles=false,lastObstacleMoveTime=0;
+let rafId=0,lastFrameTs=0,accumulator=0,scoreAnimId=0,lastFoodAt=0,streakCount=0,splashTimerId=null;
+let awaitingContinue=false,continuedThisRun=false,isFinalized=false,graceSteps=0,lastSafeSnapshot=null;
+let playerNickname='',supabaseClient=null,hasPendingScoreSubmission=false,lastSubmitTs=0,pendingScorePayload=null,dailyRankLabel='Unranked';
+let renderState={dpr:Math.max(1,window.devicePixelRatio||1),cssSize:400,tileDrawSize:20,snakeColor:'#00ff88',snakeHead:'#ccffdd',foodColor:'#ff0055'};
+let joystickEnabled=(localStorage.getItem(JOYSTICK_KEY)??(window.matchMedia('(pointer: coarse)').matches?'1':'0'))==='1',joystickPid=null,swipeStart=null;
+
+function todayUtc(){return new Date().toISOString().slice(0,10);} function debounce(fn,wait){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),wait);};}
+function tryFullscreen(){if(!document.fullscreenElement&&document.documentElement.requestFullscreen){document.documentElement.requestFullscreen().catch(()=>{});}}
+function refreshThemeCache(){const s=getComputedStyle(document.documentElement);renderState.snakeColor=s.getPropertyValue('--snake-color').trim()||'#00ff88';renderState.snakeHead=s.getPropertyValue('--snake-head').trim()||'#ccffdd';renderState.foodColor=s.getPropertyValue('--food-color').trim()||'#ff0055';}
+function resizeCanvas(){const r=canvasWrapper.getBoundingClientRect();const css=Math.floor(Math.max(240,Math.min(r.width,r.height)));renderState.cssSize=css;renderState.dpr=Math.max(1,window.devicePixelRatio||1);renderState.tileDrawSize=css/boardTiles;canvas.style.width=`${css}px`;canvas.style.height=`${css}px`;canvas.width=Math.floor(css*renderState.dpr);canvas.height=Math.floor(css*renderState.dpr);ctx.setTransform(renderState.dpr,0,0,renderState.dpr,0,0);ctx.imageSmoothingEnabled=false;refreshThemeCache();renderFrame();}
+function px(tile){return tile*renderState.tileDrawSize;}
+function clearCanvas(){ctx.clearRect(0,0,renderState.cssSize,renderState.cssSize);const t=renderState.tileDrawSize;ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--grid-line').trim()||'#1e293b';for(let i=0;i<=boardTiles;i++){const p=i*t;ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,renderState.cssSize);ctx.stroke();ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(renderState.cssSize,p);ctx.stroke();}}
+function drawFood(){const t=renderState.tileDrawSize;ctx.fillStyle=renderState.foodColor;ctx.shadowBlur=12;ctx.shadowColor=renderState.foodColor;ctx.beginPath();ctx.arc(px(food.x)+t/2,px(food.y)+t/2,(t/2)-2,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;}
+function drawObstacles(){const t=renderState.tileDrawSize;ctx.fillStyle='#ff3366';ctx.shadowBlur=10;ctx.shadowColor='#ff3366';for(const o of obstacles){ctx.fillRect(px(o.x),px(o.y),t-2,t-2);}ctx.shadowBlur=0;}
+function drawSnake(){const t=renderState.tileDrawSize;for(let i=0;i<snake.length;i++){const p=snake[i];ctx.fillStyle=i===0?renderState.snakeHead:renderState.snakeColor;ctx.shadowBlur=currentSkin==='glow'?24:12;ctx.shadowColor=renderState.snakeColor;if(currentSkin==='striped'&&i%2===0&&i!==0)ctx.globalAlpha=.72;else if(currentSkin==='gradient')ctx.globalAlpha=1-(i/snake.length)*.5;ctx.fillRect(px(p.x),px(p.y),t-2,t-2);ctx.globalAlpha=1;ctx.shadowBlur=0;}}
+function renderFrame(){clearCanvas();drawFood();if(gameMode==='RANKED'||(gameMode==='ZEN'&&zenShowObstacles))drawObstacles();drawSnake();}
+function queueDirection(nx,ny){if(!isPlaying||isPaused) return; if(nx===-dx&&ny===-dy) return; pendingDirection={x:nx,y:ny};}
+function consumeDirection(){if(!pendingDirection)return;if(pendingDirection.x===-dx&&pendingDirection.y===-dy){pendingDirection=null;return;}dx=pendingDirection.x;dy=pendingDirection.y;pendingDirection=null;}
+function animateScore(from,to){cancelAnimationFrame(scoreAnimId);const start=performance.now();const dur=220;function tick(ts){const p=Math.min(1,(ts-start)/dur);displayScore=Math.round(from+(to-from)*p);scoreElement.textContent=String(displayScore);if(p<1)scoreAnimId=requestAnimationFrame(tick);}scoreAnimId=requestAnimationFrame(tick);}
+function updateStreak(){const n=Date.now();streakCount=(n-lastFoodAt<=COMBO_WINDOW_MS)?streakCount+1:1;lastFoodAt=n;streakElement.textContent=`x${streakCount}`;}
+function moveSnake(){let hx=snake[0].x+dx,hy=snake[0].y+dy;if(gameMode==='ZEN'){if(hx<0)hx=boardTiles-1;if(hx>=boardTiles)hx=0;if(hy<0)hy=boardTiles-1;if(hy>=boardTiles)hy=0;}const head={x:hx,y:hy};snake.unshift(head);if(head.x===food.x&&head.y===food.y){const prev=score;score+=10;animateScore(prev,score);scoreElement.classList.remove('bump');void scoreElement.offsetWidth;scoreElement.classList.add('bump');checkLevelUp();updateStreak();generateFood();if(score>highScore&&newHighScoreBadge)newHighScoreBadge.classList.remove('is-hidden');}else snake.pop();}
+function moveObstacles(){for(const obs of obstacles){const dirs=[[1,0],[-1,0],[0,1],[0,-1]];const d=dirs[Math.floor(Math.random()*dirs.length)];const nx=(obs.x+d[0]+boardTiles)%boardTiles,ny=(obs.y+d[1]+boardTiles)%boardTiles;const occ=snake.some(p=>p.x===nx&&p.y===ny)||(food.x===nx&&food.y===ny)||obstacles.some(o=>o!==obs&&o.x===nx&&o.y===ny);if(!occ){obs.x=nx;obs.y=ny;}}}
+function didGameEnd(){const h=snake[0];if(gameMode==='RANKED'||(gameMode==='ZEN'&&zenShowObstacles)){if((h.x<0||h.x>=boardTiles||h.y<0||h.y>=boardTiles)&&gameMode==='RANKED')return true;if(obstacles.some(o=>o.x===h.x&&o.y===h.y))return true;}for(let i=4;i<snake.length;i++)if(snake[i].x===h.x&&snake[i].y===h.y)return true;return false;}
+function isFoodPositionValid(x,y){const hit=o=>o.x===x&&o.y===y;let near=0;const ns=[{x:x+1,y},{x:x-1,y},{x,y:y+1},{x,y:y-1}];for(const n of ns){if(gameMode==='RANKED'&&(n.x<0||n.x>=boardTiles||n.y<0||n.y>=boardTiles)){near++;continue;}if(obstacles.some(o=>o.x===n.x&&o.y===n.y))near++;}const trapped=near>=3;return !(snake.some(hit)||((gameMode==='RANKED'||(gameMode==='ZEN'&&zenShowObstacles))&&obstacles.some(hit))||trapped);}
+function generateFood(){const max=boardTiles*boardTiles*2;for(let i=0;i<max;i++){const x=Math.floor(Math.random()*boardTiles),y=Math.floor(Math.random()*boardTiles);if(isFoodPositionValid(x,y)){food={x,y};return true;}}for(let y=0;y<boardTiles;y++)for(let x=0;x<boardTiles;x++)if(isFoodPositionValid(x,y)){food={x,y};return true;}if(isPlaying)victory();return false;}
+function generateObstacles(){const head=snake[0],near=(x,y)=>Math.abs(x-head.x)<3&&Math.abs(y-head.y)<3;let free=0;for(let y=0;y<boardTiles;y++)for(let x=0;x<boardTiles;x++){const occ=snake.some(p=>p.x===x&&p.y===y)||(food.x===x&&food.y===y)||obstacles.some(o=>o.x===x&&o.y===y);if(!occ&&!near(x,y))free++;}const want=Math.min(level-1,obstacles.length+free);let a=0,max=boardTiles*boardTiles*3;while(obstacles.length<want&&a<max){a++;const o={x:Math.floor(Math.random()*boardTiles),y:Math.floor(Math.random()*boardTiles)};const occ=snake.some(p=>p.x===o.x&&p.y===o.y)||(food.x===o.x&&food.y===o.y)||obstacles.some(e=>e.x===o.x&&e.y===o.y);if(!near(o.x,o.y)&&!occ)obstacles.push(o);}}
+function checkLevelUp(){let threshold=gameDifficulty==='HARD'?100:50;const nl=Math.floor(score/threshold)+1;if(nl<=level)return;level=nl;levelElement.textContent=String(level);currentSpeed=Math.max(30,GAME_SPEED_START-((level-1)*SPEED_DECREMENT));showLevelNotice(`LEVEL ${level}`);updateLevelTheme();if(gameMode==='RANKED'||(gameMode==='ZEN'&&zenShowObstacles))generateObstacles();}
+function updateLevelTheme(){const themes=['default','cyberpunk','classic','sunset'];currentTheme=themes[(level-1)%themes.length];document.body.setAttribute('data-theme',currentTheme);document.documentElement.style.setProperty('--level-hue',`${(level-1)*15}deg`);refreshThemeCache();}
+function showLevelNotice(text){const n=document.createElement('div');n.className='level-notice';n.textContent=text;canvasWrapper.appendChild(n);setTimeout(()=>n.classList.add('fade-out'),650);setTimeout(()=>n.remove(),1200);}
+function checkArenaExpansion(){const occ=snake.length/(boardTiles*boardTiles);if(!arenaExpanded&&occ>.8){arenaExpanded=true;boardTiles=EXPANDED_TILES;resizeCanvas();showLevelNotice('ARENA EXPANDED!');}else if(arenaExpanded&&occ>.95)victory();}
+function updateStep(){consumeDirection();lastSafeSnapshot={snake:snake.map(p=>({x:p.x,y:p.y})),dx,dy};moveSnake();if(graceSteps>0)graceSteps--;else if(didGameEnd()){endGame();return;}if(gameMode==='RANKED'||(gameMode==='ZEN'&&zenShowObstacles)){const now=Date.now();if(level>=10&&now-lastObstacleMoveTime>OBSTACLE_MOVE_INTERVAL){moveObstacles();lastObstacleMoveTime=now;}}checkArenaExpansion();}
+function frame(ts){if(!isPlaying||isPaused)return;if(!lastFrameTs)lastFrameTs=ts;accumulator+=(ts-lastFrameTs);lastFrameTs=ts;let s=0;while(accumulator>=currentSpeed&&s<5){updateStep();if(!isPlaying||isPaused)return;accumulator-=currentSpeed;s++;}renderFrame();rafId=requestAnimationFrame(frame);}
+function startLoop(){cancelAnimationFrame(rafId);lastFrameTs=0;accumulator=0;rafId=requestAnimationFrame(frame);} function stopLoop(){cancelAnimationFrame(rafId);rafId=0;}
+function canContinueToday(){const t=todayUtc(),d=localStorage.getItem(CONTINUE_DATE_KEY);if(d!==t){localStorage.setItem(CONTINUE_DATE_KEY,t);localStorage.setItem(CONTINUE_COUNT_KEY,'0');return true;}return Number(localStorage.getItem(CONTINUE_COUNT_KEY)||0)<MAX_CONTINUES_PER_DAY;}
+function consumeContinue(){const t=todayUtc(),d=localStorage.getItem(CONTINUE_DATE_KEY);if(d!==t){localStorage.setItem(CONTINUE_DATE_KEY,t);localStorage.setItem(CONTINUE_COUNT_KEY,'0');}const c=Number(localStorage.getItem(CONTINUE_COUNT_KEY)||0)+1;localStorage.setItem(CONTINUE_COUNT_KEY,String(c));}
+async function requestRewardedAd(){if(typeof window.requestRewardedAd==='function')return Boolean(await window.requestRewardedAd());await new Promise(r=>setTimeout(r,300));return true;}
+function populateSummary(prefix){const occ=(snake.length/(boardTiles*boardTiles))*100;if(occ>bestOccupancy){bestOccupancy=occ;localStorage.setItem('snakeBestOccupancy',String(bestOccupancy));}const set=(id,val)=>{const el=document.getElementById(`${prefix}-${id}`);if(el)el.textContent=val;};set('score',String(score));set('level',String(level));set('length',String(snake.length));set('occupancy',`${occ.toFixed(1)}%`);set('mode',gameMode);set('best-occupancy',`${Number(bestOccupancy).toFixed(1)}%`);}
+function finalizeGameOver(){if(isFinalized)return;isFinalized=true;awaitingContinue=false;continueBtn.disabled=true;continueStatus.textContent='Continue unavailable.';submitScoreIfEligible();try{window.onGameOver(score,{mode:gameMode,level,highScore,isNewHighScore:score>=highScore,dailyContinueUsed:continuedThisRun,canContinue:canContinueToday()&&!continuedThisRun});}catch{} }
+function reviveGame(){if(lastSafeSnapshot){snake=lastSafeSnapshot.snake.map(p=>({x:p.x,y:p.y}));dx=lastSafeSnapshot.dx;dy=lastSafeSnapshot.dy;}graceSteps=2;gameOverScreen.classList.remove('active');gameOverScreen.classList.add('hidden');isPlaying=true;isPaused=false;document.body.classList.add('is-playing');startLoop();}
+function endGame(){isPlaying=false;isPaused=false;stopLoop();document.body.classList.remove('is-playing');navigator.vibrate?.(35);if(score>highScore){highScore=score;localStorage.setItem('snakeHighScore',String(highScore));highScoreElement.textContent=String(highScore);}populateSummary('summary');gameOverScreen.classList.remove('hidden');gameOverScreen.classList.add('active');awaitingContinue=!continuedThisRun&&canContinueToday();continueBtn.disabled=!awaitingContinue;if(!awaitingContinue)finalizeGameOver();else continueStatus.textContent='One continue available today.';}
+function victory(){isPlaying=false;stopLoop();showLevelNotice('ULTIMATE VICTORY!');setTimeout(()=>{endGame();if(document.querySelector('#game-over-screen .danger-text')){const t=document.querySelector('#game-over-screen .danger-text');t.textContent='YOU WON!';t.style.color='var(--snake-color)';}},1000);}
+function resetGame(){score=0;displayScore=0;level=1;currentSpeed=GAME_SPEED_START;obstacles=[];boardTiles=DEFAULT_TILES;arenaExpanded=false;lastObstacleMoveTime=0;streakCount=0;lastFoodAt=0;graceSteps=0;awaitingContinue=false;continuedThisRun=false;isFinalized=false;scoreElement.textContent='0';levelElement.textContent='1';streakElement.textContent='x0';snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];dx=1;dy=0;pendingDirection=null;generateFood();resizeCanvas();if(newHighScoreBadge)newHighScoreBadge.classList.add('is-hidden');}
+function startGame(showTransition=true){if(!ensureNicknameReady())return;tryFullscreen();if(showTransition){showSplash({title:'GET READY',subtitle:`${gameMode} mode - ${gameDifficulty}`,duration:700,onComplete:()=>startGame(false)});return;}resetGame();startScreen.classList.remove('active');startScreen.classList.add('hidden');gameOverScreen.classList.remove('active');gameOverScreen.classList.add('hidden');pauseScreen.classList.remove('active');pauseScreen.classList.add('hidden');isPlaying=true;isPaused=false;document.body.classList.add('is-playing');startLoop();}
+function togglePause(){if(!isPlaying)return;isPaused=!isPaused;if(isPaused){populateSummary('pause');pauseScreen.classList.remove('hidden');pauseScreen.classList.add('active');stopLoop();}else resumeGame();}
+function resumeGame(){if(!isPlaying)return;isPaused=false;pauseScreen.classList.remove('active');pauseScreen.classList.add('hidden');startLoop();}
+function showCustomization(){startScreen.classList.remove('active');startScreen.classList.add('hidden');customizeScreen.classList.remove('hidden');customizeScreen.classList.add('active');}
+function hideCustomization(){customizeScreen.classList.remove('active');customizeScreen.classList.add('hidden');startScreen.classList.remove('hidden');startScreen.classList.add('active');}
+function showSplash(o={}){const title=o.title||'SLITHEROO',subtitle=o.subtitle||'Enter the neon arena.',duration=typeof o.duration==='number'?o.duration:1300;if(splashTimerId){clearTimeout(splashTimerId);splashTimerId=null;}splashTitle.textContent=title;splashSubtitle.textContent=subtitle;splashScreen.classList.remove('hidden');splashScreen.classList.add('active');splashTimerId=setTimeout(()=>{splashScreen.classList.remove('active');splashScreen.classList.add('hidden');splashTimerId=null;if(typeof o.onComplete==='function')o.onComplete();},duration);}
+function goToMainMenu(showTransition=true){if(awaitingContinue&&!isFinalized)finalizeGameOver();if(showTransition){showSplash({title:'MAIN MENU',subtitle:'Tune settings and launch another run.',duration:650,onComplete:()=>goToMainMenu(false)});return;}isPlaying=false;isPaused=false;stopLoop();document.body.classList.remove('is-playing');gameOverScreen.classList.remove('active');gameOverScreen.classList.add('hidden');customizeScreen.classList.remove('active');customizeScreen.classList.add('hidden');pauseScreen.classList.remove('active');pauseScreen.classList.add('hidden');startScreen.classList.remove('hidden');startScreen.classList.add('active');resetGame();setSubmitStatus('');loadLeaderboards();updatePregameStats();}
+function changeDirection(event){const key=event.key,n=typeof key==='string'?key.toLowerCase():'';if(key==='Escape'||n==='p'){togglePause();return;}const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1],a:[-1,0],d:[1,0],w:[0,-1],s:[0,1]};const v=d[key]||d[n];if(!v)return;queueDirection(v[0],v[1]);}
+function normalizeNickname(input){return String(input||'').trim().replace(/\s+/g,' ');} 
+function validateNickname(raw){const n=normalizeNickname(raw);if(!n)return{valid:false,nickname:n,message:'Nickname is required.'};if(n.length<3||n.length>16)return{valid:false,nickname:n,message:'Nickname must be 3-16 characters.'};if(!/^[A-Za-z0-9 _-]+$/.test(n))return{valid:false,nickname:n,message:'Use letters, numbers, spaces, underscore, or hyphen only.'};if(n.toLowerCase()==='anonymous')return{valid:false,nickname:n,message:'This nickname is reserved.'};return{valid:true,nickname:n,message:''};}
+function setNicknameError(message){if(!nicknameError)return;if(message){nicknameError.textContent=message;nicknameError.classList.remove('is-hidden');}else{nicknameError.textContent='';nicknameError.classList.add('is-hidden');}}
+function updateNicknameUI(){if(currentNicknameElement)currentNicknameElement.textContent=playerNickname||'Not set';if(startBtn){startBtn.disabled=!playerNickname;startBtn.style.opacity=playerNickname?'1':'0.55';startBtn.style.cursor=playerNickname?'pointer':'not-allowed';}updatePregameStats();}
+function onSaveNickname(){const r=validateNickname(nicknameInput.value);if(!r.valid){setNicknameError(r.message);return;}playerNickname=r.nickname;localStorage.setItem(NICKNAME_KEY,playerNickname);sessionStorage.setItem(NICKNAME_SESSION_KEY,'1');nicknameInput.value=playerNickname;setNicknameError('');updateNicknameUI();loadLeaderboards();}
+function onChangeNickname(){sessionStorage.removeItem(NICKNAME_SESSION_KEY);nicknameInput.focus();nicknameInput.select();}
+function ensureNicknameReady(){const ok=sessionStorage.getItem(NICKNAME_SESSION_KEY)==='1';if(playerNickname&&ok)return true;const r=validateNickname(nicknameInput.value||playerNickname);if(!r.valid){setNicknameError(r.message);nicknameInput.focus();return false;}playerNickname=r.nickname;localStorage.setItem(NICKNAME_KEY,playerNickname);sessionStorage.setItem(NICKNAME_SESSION_KEY,'1');updateNicknameUI();return true;}
+function initializeBackend(){if(!window.supabase||!window.supabase.createClient)return;const {SUPABASE_URL,SUPABASE_ANON_KEY}=SUPABASE_CONFIG;if(!SUPABASE_URL||!SUPABASE_ANON_KEY)return;supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}
+function isScoreValid(v){return Number.isInteger(v)&&v>=0&&v<=MAX_SAFE_SCORE;}
+function setSubmitStatus(message,success=true){if(!submitStatus)return;submitStatus.textContent=message||'';submitStatus.style.opacity=message?'0.85':'0';submitStatus.style.color=success?'':'#fb7185';}
+async function submitScoreIfEligible(){if(hasPendingScoreSubmission)return;if(!supabaseClient){setSubmitStatus('Leaderboard offline: Supabase is not configured.',false);return;}if(!playerNickname){setSubmitStatus('Set a nickname to submit scores.',false);return;}if(!isScoreValid(score)){setSubmitStatus('Score rejected: invalid value.',false);return;}const now=Date.now();if(now-lastSubmitTs<SCORE_SUBMIT_COOLDOWN_MS){setSubmitStatus('Please wait a moment before submitting another score.',false);return;}const payload={nickname:playerNickname,score,mode:gameMode,score_date_utc:todayUtc()};pendingScorePayload=payload;hasPendingScoreSubmission=true;setSubmitStatus('Submitting score...',true);retrySubmitBtn.classList.add('is-hidden');try{const {error}=await supabaseClient.from('scores').insert(payload);if(error)throw error;lastSubmitTs=Date.now();setSubmitStatus('Score submitted to leaderboard.',true);await loadLeaderboards();}catch(err){setSubmitStatus(`Submit failed: ${err&&err.message?err.message:'Unable to submit score.'}`,false);retrySubmitBtn.classList.remove('is-hidden');}finally{hasPendingScoreSubmission=false;}}
+async function retryLastSubmission(){if(!pendingScorePayload||!supabaseClient||hasPendingScoreSubmission)return;hasPendingScoreSubmission=true;setSubmitStatus('Retrying score submit...',true);retrySubmitBtn.classList.add('is-hidden');try{const {error}=await supabaseClient.from('scores').insert(pendingScorePayload);if(error)throw error;lastSubmitTs=Date.now();setSubmitStatus('Score submitted to leaderboard.',true);await loadLeaderboards();}catch(err){setSubmitStatus(`Submit failed: ${err&&err.message?err.message:'Retry failed.'}`,false);retrySubmitBtn.classList.remove('is-hidden');}finally{hasPendingScoreSubmission=false;}}
+function renderLeaderboard(list,entries){list.innerHTML='';if(!entries||entries.length===0){const e=document.createElement('li');e.textContent='No scores yet.';e.className='leaderboard-empty';list.appendChild(e);return;}entries.forEach((entry,i)=>{const li=document.createElement('li');const rank=entry.rank||i+1,name=entry.nickname||'Unknown',s=Number.isFinite(entry.score)?entry.score:0;li.innerHTML=`<span>#${rank} ${name}</span><strong>${s}</strong>`;if(playerNickname&&name.toLowerCase()===playerNickname.toLowerCase())li.classList.add('current-player');list.appendChild(li);});}
+function switchLeaderboardTab(tab){const daily=tab==='daily';dailyTabBtn.classList.toggle('active',daily);alltimeTabBtn.classList.toggle('active',!daily);dailyLeaderboardList.classList.toggle('is-hidden',!daily);alltimeLeaderboardList.classList.toggle('is-hidden',daily);}
+function updatePregameStats(){pregameBestScore.textContent=String(highScore);pregameDailyRank.textContent=dailyRankLabel;}
+async function loadLeaderboards(){if(!leaderboardStatus)return;if(!supabaseClient){leaderboardStatus.textContent='Set Supabase config to enable leaderboards.';renderLeaderboard(dailyLeaderboardList,[]);renderLeaderboard(alltimeLeaderboardList,[]);dailyRankLabel='Unranked';updatePregameStats();return;}leaderboardStatus.textContent='Loading leaderboard...';try{const [d,a]=await Promise.all([supabaseClient.from('daily_leaderboard').select('*').eq('score_date_utc',todayUtc()).order('rank',{ascending:true}).limit(10),supabaseClient.from('all_time_leaderboard').select('*').order('rank',{ascending:true}).limit(50)]);if(d.error)throw d.error;if(a.error)throw a.error;renderLeaderboard(dailyLeaderboardList,d.data||[]);renderLeaderboard(alltimeLeaderboardList,a.data||[]);if(playerNickname){const f=(d.data||[]).find(x=>String(x.nickname||'').toLowerCase()===playerNickname.toLowerCase());dailyRankLabel=f?`#${f.rank}`:'Unranked';}else dailyRankLabel='Unranked';leaderboardStatus.textContent='Leaderboard updated.';updatePregameStats();}catch(err){leaderboardStatus.textContent=navigator.onLine===false?'Offline mode: leaderboard unavailable.':`Leaderboard error: ${err&&err.message?err.message:'Unable to load leaderboard.'}`;renderLeaderboard(dailyLeaderboardList,[]);renderLeaderboard(alltimeLeaderboardList,[]);dailyRankLabel='Unranked';updatePregameStats();}}
+function setupTouchControls(){joystickRoot.classList.toggle('is-hidden',!joystickEnabled);joystickToggle.textContent=`Joystick: ${joystickEnabled?'On':'Off'}`;canvasWrapper.addEventListener('pointerdown',(e)=>{if(e.target.closest('#joystick'))return;swipeStart={x:e.clientX,y:e.clientY};});canvasWrapper.addEventListener('pointerup',(e)=>{if(!swipeStart||!isPlaying||isPaused)return;const dxp=e.clientX-swipeStart.x,dyp=e.clientY-swipeStart.y;swipeStart=null;if(Math.abs(dxp)<SWIPE_THRESHOLD&&Math.abs(dyp)<SWIPE_THRESHOLD)return;if(Math.abs(dxp)>Math.abs(dyp))queueDirection(dxp>0?1:-1,0);else queueDirection(0,dyp>0?1:-1);});canvasWrapper.addEventListener('touchmove',(e)=>{if(isPlaying)e.preventDefault();},{passive:false});joystickRoot.addEventListener('pointerdown',(e)=>{if(!joystickEnabled)return;joystickPid=e.pointerId;joystickRoot.setPointerCapture(e.pointerId);});window.addEventListener('pointermove',(e)=>{if(!joystickEnabled||joystickPid!==e.pointerId)return;const r=joystickRoot.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;const rawX=e.clientX-cx,rawY=e.clientY-cy,rad=r.width/2,max=rad*.65,dist=Math.min(Math.hypot(rawX,rawY),max),ang=Math.atan2(rawY,rawX);joystickThumb.style.transform=`translate(calc(-50% + ${Math.cos(ang)*dist}px), calc(-50% + ${Math.sin(ang)*dist}px))`;if(dist<rad*.25)return;if(Math.abs(rawX)>Math.abs(rawY))queueDirection(rawX>0?1:-1,0);else queueDirection(0,rawY>0?1:-1);});window.addEventListener('pointerup',(e)=>{if(joystickPid!==e.pointerId)return;joystickPid=null;joystickThumb.style.transform='translate(-50%, -50%)';});joystickToggle.addEventListener('click',()=>{joystickEnabled=!joystickEnabled;localStorage.setItem(JOYSTICK_KEY,joystickEnabled?'1':'0');joystickRoot.classList.toggle('is-hidden',!joystickEnabled);joystickToggle.textContent=`Joystick: ${joystickEnabled?'On':'Off'}`;});}
+
+startBtn.addEventListener('click',()=>startGame(true));restartBtn.addEventListener('click',()=>{if(awaitingContinue&&!isFinalized)finalizeGameOver();startGame(false);});
+continueBtn.addEventListener('click',async()=>{if(!awaitingContinue||continueBtn.disabled)return;continueBtn.disabled=true;continueStatus.textContent='Loading rewarded ad...';const ok=await requestRewardedAd();if(!ok){continueStatus.textContent='Ad unavailable. Try again.';continueBtn.disabled=false;return;}consumeContinue();awaitingContinue=false;continuedThisRun=true;isFinalized=false;reviveGame();continueStatus.textContent='Continue consumed. Good luck.';});
+pauseBtn.addEventListener('click',togglePause);resumeBtn.addEventListener('click',resumeGame);mainMenuBtn.addEventListener('click',()=>goToMainMenu(true));pauseMainMenuBtn.addEventListener('click',()=>goToMainMenu(true));mainHomeBtn.addEventListener('click',()=>goToMainMenu(true));
+customizeBtn.addEventListener('click',showCustomization);backToMenuBtn.addEventListener('click',hideCustomization);document.addEventListener('keydown',changeDirection);gameOverScreen.addEventListener('click',(e)=>{if(e.target===gameOverScreen){if(awaitingContinue&&!isFinalized)finalizeGameOver();startGame(false);}});
+saveNicknameBtn.addEventListener('click',onSaveNickname);changeNicknameBtn.addEventListener('click',onChangeNickname);nicknameInput.addEventListener('keydown',(e)=>{if(e.key==='Enter')onSaveNickname();});
+dailyTabBtn.addEventListener('click',()=>switchLeaderboardTab('daily'));alltimeTabBtn.addEventListener('click',()=>switchLeaderboardTab('alltime'));retrySubmitBtn.addEventListener('click',retryLastSubmission);
+modeBtns.forEach(btn=>btn.addEventListener('click',()=>{modeBtns.forEach(b=>b.classList.remove('active'));btn.classList.add('active');gameMode=btn.dataset.mode;modeDesc.textContent=gameMode==='RANKED'?'Traditional Snake. Walls are deadly.':'Relaxed mode. Walls wrap around.';}));
+skinOptions.forEach(opt=>opt.addEventListener('click',()=>{skinOptions.forEach(o=>o.classList.remove('selected'));opt.classList.add('selected');currentSkin=opt.dataset.skin;}));
+themeOptions.forEach(opt=>opt.addEventListener('click',()=>{themeOptions.forEach(o=>o.classList.remove('selected'));opt.classList.add('selected');currentTheme=opt.dataset.theme;document.body.setAttribute('data-theme',currentTheme);refreshThemeCache();renderFrame();}));
+zenObstaclesToggle.addEventListener('change',(e)=>{zenShowObstacles=e.target.checked;});
+diffBtns.forEach(btn=>btn.addEventListener('click',()=>{diffBtns.forEach(b=>b.classList.remove('active'));btn.classList.add('active');gameDifficulty=btn.dataset.diff;}));
+window.addEventListener('resize',debounce(resizeCanvas,120));window.addEventListener('orientationchange',debounce(resizeCanvas,120));
+if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./service-worker.js').catch(()=>{});});}
+initializeBackend();playerNickname=normalizeNickname(localStorage.getItem(NICKNAME_KEY)||'');if(playerNickname)nicknameInput.value=playerNickname;setNicknameError('');updateNicknameUI();switchLeaderboardTab('daily');setupTouchControls();loadLeaderboards();
+startScreen.classList.remove('active');startScreen.classList.add('hidden');showSplash({title:'SLITHEROO',subtitle:'Ranked and Zen snake action.',duration:1300,onComplete:()=>{startScreen.classList.remove('hidden');startScreen.classList.add('active');resizeCanvas();}});

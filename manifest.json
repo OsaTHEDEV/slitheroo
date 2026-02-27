@@ -1,0 +1,15 @@
+{
+  "name": "Slitheroo",
+  "short_name": "Slitheroo",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "description": "A premium neon-style Snake game built with HTML5 Canvas.",
+  "icons": [
+    { "src": "assets/favicon-16.png", "sizes": "16x16", "type": "image/png" },
+    { "src": "assets/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "assets/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

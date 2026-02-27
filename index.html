@@ -12,8 +12,10 @@
   gtag('config', 'G-NKDKP76JY1');
 </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Slitheroo</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
     <link rel="icon" href="assets/favicon.ico">
@@ -22,7 +24,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <meta name="description" content="A premium neon-style Snake game built with HTML5 Canvas.">
+    <meta name="description" content="Play Slitheroo online — a competitive neon Snake game with daily and all-time leaderboards. Start climbing now.">
 </head>
 
 <body>
@@ -55,17 +57,26 @@
                 <div class="score-item">Level: <span id="level">1</span></div>
                 <div class="score-item">High Score: <span id="high-score">0</span></div>
             </div>
+            <div class="score-board score-board-secondary">
+                <div class="score-item">Streak: <span id="streak">x0</span></div>
+            </div>
         </header>
 
-        <div class="canvas-wrapper">
+        <div class="canvas-wrapper" id="canvas-wrapper">
             <canvas id="gameCanvas" width="400" height="400"></canvas>
+            <div id="mobile-controls" class="mobile-controls">
+                <button id="joystick-toggle" class="glass-btn tiny" type="button">Joystick: On</button>
+                <div id="joystick" class="joystick" aria-label="Touch joystick" role="application">
+                    <div id="joystick-thumb" class="joystick-thumb"></div>
+                </div>
+            </div>
         </div>
 
         <footer class="game-footer">
             <div id="mobile-notice" class="subtle-text">
-                This game is currently desktop-only. Mobile support is coming later.
+                Mobile optimized: swipe or use joystick. Tap to play fullscreen.
             </div>
-            <div class="version-label subtle-text">v1.1.2</div>
+            <div class="version-label subtle-text">v1.2.0</div>
         </footer>
     </div>
 
@@ -80,6 +91,10 @@
     <div id="start-screen" class="overlay active">
         <div class="menu-card">
             <h2>Ready?</h2>
+            <div class="pregame-stats">
+                <div>Best Score: <strong id="pregame-best-score">0</strong></div>
+                <div>Daily Rank: <strong id="pregame-daily-rank">Unranked</strong></div>
+            </div>
             <div class="nickname-panel">
                 <label for="nickname-input" class="nickname-label">Nickname</label>
                 <div class="nickname-input-row">
@@ -105,7 +120,7 @@
                 </div>
             </div>
             <div class="menu-actions">
-                <button id="start-btn" class="glow-btn">START GAME</button>
+                <button id="start-btn" class="glow-btn">TAP TO START</button>
                 <button id="customize-btn" class="glass-btn">CUSTOMIZE</button>
             </div>
             <section class="leaderboard-panel" aria-label="Leaderboards">
@@ -117,7 +132,6 @@
                 <ol id="daily-leaderboard-list" class="leaderboard-list"></ol>
                 <ol id="alltime-leaderboard-list" class="leaderboard-list is-hidden"></ol>
             </section>
-            <p class="start-menu-copy">Slitheroo is a free browser snake game with Ranked and Zen modes, dynamic obstacles, arena expansion, skins, and daily challenges. No downloads - play now on desktop.</p>
         </div>
     </div>
 
@@ -225,6 +239,12 @@
                 </div>
             </div>
 
+            <div id="new-high-score-badge" class="new-high-score-badge is-hidden">New High Score!</div>
+            <div class="continue-panel">
+                <button id="continue-btn" class="glass-btn">WATCH AD TO CONTINUE (1 LIFE)</button>
+                <p id="continue-status" class="subtle-text"></p>
+            </div>
+
             <div class="menu-actions">
                 <button id="restart-btn" class="glow-btn">ONE MORE BITE</button>
                 <button id="main-menu-btn" class="glass-btn">MAIN MENU</button>
@@ -245,5 +265,3 @@
 </body>
 
 </html>
-
-
