@@ -183,12 +183,13 @@ canvas {
 
 .mobile-controls {
     position: absolute;
-    right: 10px;
+    left: 10px;
+    right: auto;
     bottom: 10px;
     display: none;
     flex-direction: column;
     gap: 0.35rem;
-    align-items: flex-end;
+    align-items: flex-start;
     z-index: 20;
 }
 
