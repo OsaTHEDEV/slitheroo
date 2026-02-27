@@ -182,15 +182,12 @@ canvas {
 }
 
 .mobile-controls {
-    position: absolute;
-    left: 10px;
-    right: auto;
-    bottom: 10px;
     display: none;
     flex-direction: column;
-    gap: 0.35rem;
-    align-items: flex-start;
-    z-index: 20;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 0.75rem;
+    width: 100%;
 }
 
 .joystick {
