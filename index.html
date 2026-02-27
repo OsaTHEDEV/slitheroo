@@ -65,18 +65,10 @@
         <div class="canvas-wrapper" id="canvas-wrapper">
             <canvas id="gameCanvas" width="400" height="400"></canvas>
         </div>
-        <div class="controls-zone">
-            <div id="mobile-controls" class="mobile-controls">
-                <button id="joystick-toggle" class="glass-btn tiny" type="button">Joystick: On</button>
-                <div id="joystick" class="joystick" aria-label="Touch joystick" role="application">
-                    <div id="joystick-thumb" class="joystick-thumb"></div>
-                </div>
-            </div>
-        </div>
 
         <footer class="game-footer">
             <div id="mobile-notice" class="subtle-text">
-                Mobile optimized: swipe or use joystick. Tap to play fullscreen.
+                Mobile optimized: swipe to control. Tap to play fullscreen.
             </div>
             <div class="version-label subtle-text">v1.2.0</div>
         </footer>
@@ -119,13 +111,6 @@
                 <div class="diff-btns">
                     <button class="diff-btn active" data-diff="NORMAL">NORMAL</button>
                     <button class="diff-btn" data-diff="HARD">HARD</button>
-                </div>
-            </div>
-            <div class="custom-section">
-                <h3>Joystick Side</h3>
-                <div class="joystick-side-group" role="group" aria-label="Joystick side selector (start)">
-                    <button id="start-joy-left" class="joy-side-btn" type="button" data-joy-side="left">Left</button>
-                    <button id="start-joy-right" class="joy-side-btn" type="button" data-joy-side="right">Right</button>
                 </div>
             </div>
             <div class="menu-actions">
@@ -178,14 +163,6 @@
                     </label>
                 </div>
             </div>
-            <div class="custom-section">
-                <h3>Joystick Side</h3>
-                <div class="joystick-side-group" role="group" aria-label="Joystick side selector (customization)">
-                    <button id="custom-joy-left" class="joy-side-btn" type="button" data-joy-side="left">Left</button>
-                    <button id="custom-joy-right" class="joy-side-btn" type="button" data-joy-side="right">Right</button>
-                </div>
-            </div>
-
             <button id="back-to-menu-btn" class="glow-btn small">BACK</button>
         </div>
     </div>
