@@ -183,22 +183,19 @@ canvas {
 
 .mobile-controls {
     display: none;
-    position: fixed;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
     flex-direction: column;
     gap: 0.35rem;
     align-items: center;
-    z-index: 30;
+    width: min(94vw, 500px);
+    margin: 0.75rem auto 0;
 }
 
 .mobile-controls.side-left {
-    left: calc(env(safe-area-inset-left, 0px) + 10px);
-    right: auto;
+    align-items: flex-start;
 }
 
 .mobile-controls.side-right {
-    right: calc(env(safe-area-inset-right, 0px) + 10px);
-    left: auto;
+    align-items: flex-end;
 }
 
 .joystick {
