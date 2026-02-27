@@ -190,6 +190,10 @@ canvas {
     margin: 0.75rem auto 0;
 }
 
+.controls-zone {
+    width: 100%;
+}
+
 .mobile-controls.side-left {
     align-items: flex-start;
 }
@@ -628,6 +632,30 @@ canvas {
     opacity: 0.7;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+.joystick-side-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+}
+
+.joy-side-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-color);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.joy-side-btn.active {
+    background: rgba(0, 255, 136, 0.14);
+    border-color: var(--snake-color);
+    color: var(--snake-color);
 }
 
 .options-grid {
