@@ -4,13 +4,23 @@
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NKDKP76JY1"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9247801614753906"
+     crossorigin="anonymous"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function(){ dataLayer.push(arguments); };
   gtag('js', new Date());
+  gtag('consent', 'default', {
+    ad_storage: 'granted',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'granted',
+    wait_for_update: 500
+  });
 
   gtag('config', 'G-NKDKP76JY1');
 </script>
+<script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Slitheroo</title>
@@ -70,7 +80,12 @@
             <div id="mobile-notice" class="subtle-text">
                 Mobile optimized: swipe to control. Tap to play fullscreen.
             </div>
-            <div class="version-label subtle-text">v1.2.0</div>
+            <nav class="policy-links subtle-text" aria-label="Site policies">
+                <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
+                <a href="terms.html" target="_blank" rel="noopener">Terms</a>
+                <a href="contact.html" target="_blank" rel="noopener">Contact</a>
+            </nav>
+            <div class="version-label subtle-text">v1.3.0</div>
         </footer>
     </div>
 
@@ -250,9 +265,15 @@
     <script>
         window.SLITHEROO_CONFIG = window.SLITHEROO_CONFIG || {
             SUPABASE_URL: 'https://yifxtldhqunzievavlnw.supabase.co',
-            SUPABASE_ANON_KEY: 'sb_publishable_FPywpmUdsHsYuG0394VuoA_oJ4eLjOJ'
+            SUPABASE_ANON_KEY: 'sb_publishable_FPywpmUdsHsYuG0394VuoA_oJ4eLjOJ',
+            ADS_ENABLED: false,
+            AD_STACK: 'mock',
+            ADMGR_NETWORK_CODE: '',
+            ADMGR_REWARDED_AD_UNIT_PATH: '/0000000/slitheroo_rewarded',
+            AD_REQUEST_TIMEOUT_MS: 8000
         };
     </script>
+    <script src="ads/rewarded-ad.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 </body>
