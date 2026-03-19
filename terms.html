@@ -1,34 +1,79 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="google-adsense-account" content="ca-pub-9247801614753906">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slitheroo Terms of Service</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 2rem auto; max-width: 860px; line-height: 1.6; padding: 0 1rem; color: #0f172a; }
-        h1, h2 { color: #111827; }
-        a { color: #0f766e; }
-        .meta { color: #475569; font-size: 0.95rem; }
-    </style>
+    <meta name="description" content="Review the terms of service for playing Slitheroo online.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <h1>Terms of Service</h1>
-    <p class="meta">Effective date: March 4, 2026</p>
-    <p>By using Slitheroo, you agree to these terms.</p>
+<body class="page">
+    <div class="site-shell">
+        <nav class="site-nav" aria-label="Primary">
+            <a class="brand-link" href="index.html" aria-label="Slitheroo home">
+                <img src="assets/favicon-32.png" alt="" width="24" height="24" decoding="async" loading="eager">
+                <span>Slitheroo</span>
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-links">
+                Menu
+            </button>
+            <div class="site-nav-links" id="site-nav-links">
+                <a href="index.html">Home</a>
+                <a href="how-to-play.html">How to Play</a>
+                <a href="about.html">About</a>
+                <a href="index.html#leaderboard">Leaderboard</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </nav>
 
-    <h2>Gameplay and Accounts</h2>
-    <p>You are responsible for the nickname and content you submit to leaderboards. Do not use abusive, illegal, or infringing content.</p>
+        <main class="page-content">
+            <section class="content-section">
+                <h1>Terms of Service</h1>
+                <p class="meta">Effective date: March 4, 2026</p>
+                <p>By using Slitheroo, you agree to these terms.</p>
 
-    <h2>Availability</h2>
-    <p>We may update, pause, or discontinue the game or features at any time without prior notice.</p>
+                <h2>Gameplay and Accounts</h2>
+                <p>You are responsible for the nickname and content you submit to leaderboards. Do not use abusive, illegal, or infringing content.</p>
 
-    <h2>Monetization</h2>
-    <p>Slitheroo may include rewarded advertising. Reward outcomes are based on successful ad completion and platform availability.</p>
+                <h2>Availability</h2>
+                <p>We may update, pause, or discontinue the game or features at any time without prior notice.</p>
 
-    <h2>Limitation of Liability</h2>
-    <p>Slitheroo is provided "as is" without warranties. To the fullest extent permitted by law, we are not liable for damages arising from use of the service.</p>
+                <h2>Monetization</h2>
+                <p>Slitheroo may include rewarded advertising. Reward outcomes are based on successful ad completion and platform availability.</p>
 
-    <p><a href="index.html">Back to Slitheroo</a></p>
+                <h2>Limitation of Liability</h2>
+                <p>Slitheroo is provided "as is" without warranties. To the fullest extent permitted by law, we are not liable for damages arising from use of the service.</p>
+            </section>
+        </main>
+
+        <footer class="site-footer" aria-label="Site footer">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="contact.html">Contact</a>
+                <a href="about.html">About</a>
+                <a href="how-to-play.html">How to Play</a>
+            </div>
+            <p class="footer-note">Slitheroo is a browser-based arcade experience built for quick, competitive fun.</p>
+        </footer>
+    </div>
+
+    <script>
+        const navToggle = document.querySelector('.nav-toggle');
+        const navLinks = document.querySelector('.site-nav-links');
+        if (navToggle && navLinks) {
+            navToggle.addEventListener('click', () => {
+                const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+                navToggle.setAttribute('aria-expanded', String(!expanded));
+                navLinks.classList.toggle('open');
+            });
+        }
+    </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -24,7 +24,7 @@
     <meta charset="UTF-8">
     <meta name="google-adsense-account" content="ca-pub-9247801614753906">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Slitheroo</title>
+    <title>Slitheroo - Neon Snake Game with Daily Leaderboards</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
@@ -35,11 +35,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <meta name="description" content="Play Slitheroo online — a competitive neon Snake game with daily and all-time leaderboards. Start climbing now.">
+    <meta name="description" content="Play Slitheroo online — a competitive neon Snake game with daily and all-time leaderboards. Instant browser play, no download.">
 </head>
 
 <body>
-    <div class="game-container">
+    <div class="site-shell">
+        <nav class="site-nav" aria-label="Primary">
+            <a class="brand-link" href="index.html" aria-label="Slitheroo home">
+                <img src="assets/favicon-32.png" alt="" width="24" height="24" decoding="async" loading="eager">
+                <span>Slitheroo</span>
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-links">
+                Menu
+            </button>
+            <div class="site-nav-links" id="site-nav-links">
+                <a href="index.html">Home</a>
+                <a href="how-to-play.html">How to Play</a>
+                <a href="about.html">About</a>
+                <a href="index.html#leaderboard">Leaderboard</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </nav>
+
+        <div class="game-container">
         <header>
             <div class="header-top">
                 <div class="brand">
@@ -87,6 +107,53 @@
                 <a href="contact.html" target="_blank" rel="noopener">Contact</a>
             </nav>
             <div class="version-label subtle-text">v1.3.0</div>
+        </footer>
+    </div>
+        <main class="page-content">
+            <section class="content-section" id="about">
+                <h2>About the Game</h2>
+                <p>Slitheroo is a modern, neon-flavored take on the classic Snake game, built for quick sessions and real competition. You guide a glowing snake across a tight grid, grabbing food to grow longer while trying to avoid walls and your own tail. Each bite raises the pressure as the space shrinks and your path options narrow. The loop is simple, but the tension builds fast, which is exactly why one more run always feels possible.</p>
+                <p>This version is designed to launch instantly in your browser with no downloads or installs. That means you can jump in on desktop or mobile at any time, play a few rounds, and come back later to climb higher. Daily and all-time leaderboards keep the rivalry alive, so every game becomes a chance to beat your personal best or chase the global top spots. With quick rounds, skill-based scoring, and endless replayability, Slitheroo is perfect for short breaks and long marathons alike.</p>
+            </section>
+
+            <section class="content-section" id="how-to-play">
+                <h2>How to Play</h2>
+                <ul class="content-list">
+                    <li>Use arrow keys on desktop or swipe on mobile to change direction.</li>
+                    <li>Eat food to grow longer and increase your score.</li>
+                    <li>Avoid crashing into walls or your own body.</li>
+                    <li>Push for the highest score and climb the leaderboard.</li>
+                </ul>
+                <p class="inline-link">Want deeper tips? Visit the <a href="how-to-play.html">full How to Play guide</a>.</p>
+            </section>
+
+            <section class="content-section" id="features">
+                <h2>Game Features</h2>
+                <ul class="content-list">
+                    <li>Fast browser gameplay with instant loading</li>
+                    <li>Mobile-friendly controls with swipe support</li>
+                    <li>Global leaderboard competition</li>
+                    <li>Daily high scores to chase every day</li>
+                    <li>Optional continue-after-death feature</li>
+                </ul>
+                <p class="inline-link">Explore the community at our <a href="blog.html">strategy blog</a>.</p>
+            </section>
+
+            <section class="content-section" id="leaderboard">
+                <h2>Leaderboard Competition</h2>
+                <p>Every run in Slitheroo can be recorded on the global leaderboard, where daily and all-time rankings reset the race. Use a consistent nickname, track your climb, and challenge friends to beat your best score. Daily rankings reward sharp focus, while the all-time board honors the most skilled players over long streaks. If you want to stay at the top, keep practicing and refine your pathing with every round.</p>
+            </section>
+        </main>
+
+        <footer class="site-footer" aria-label="Site footer">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="contact.html">Contact</a>
+                <a href="about.html">About</a>
+                <a href="how-to-play.html">How to Play</a>
+            </div>
+            <p class="footer-note">Slitheroo is a browser-based arcade experience built for quick, competitive fun.</p>
         </footer>
     </div>
 
@@ -272,6 +339,18 @@
     <script src="ads/rewarded-ad.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
+    <script>
+        const navToggle = document.querySelector('.nav-toggle');
+        const navLinks = document.querySelector('.site-nav-links');
+        if (navToggle && navLinks) {
+            navToggle.addEventListener('click', () => {
+                const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+                navToggle.setAttribute('aria-expanded', String(!expanded));
+                navLinks.classList.toggle('open');
+            });
+        }
+    </script>
 </body>
 
 </html>
+
