@@ -1,4 +1,4 @@
-const CACHE_NAME = 'slitheroo-v1.3.0';
+const CACHE_NAME = 'slitheroo-v1.4.0';
 const APP_SHELL = [
   './',
   './index.html',
@@ -9,6 +9,9 @@ const APP_SHELL = [
   './privacy.html',
   './terms.html',
   './contact.html',
+  './about.html',
+  './how-to-play.html',
+  './blog.html',
   './assets/logo-full.png',
   './assets/favicon-16.png',
   './assets/favicon-32.png',
