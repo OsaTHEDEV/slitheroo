@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="google-adsense-account" content="ca-pub-9247801614753906">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Slitheroo</title>
-    <meta name="description" content="Learn about Slitheroo, a fast browser-based neon snake game built for quick arcade fun.">
+    <title>About Slitheroo – The Story Behind the Neon Snake Game</title>
+    <meta name="description" content="Learn the story behind Slitheroo, how it was built, what makes it different from other snake games, and where it's headed next.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
@@ -18,12 +18,12 @@
                 <img src="assets/favicon-32.png" alt="" width="24" height="24" decoding="async" loading="eager">
                 <span>Slitheroo</span>
             </a>
-            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-links">
-                Menu
-            </button>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-links">Menu</button>
             <div class="site-nav-links" id="site-nav-links">
                 <a href="index.html">Home</a>
                 <a href="how-to-play.html">How to Play</a>
+                <a href="blog.html">Blog</a>
+                <a href="faq.html">FAQ</a>
                 <a href="about.html">About</a>
                 <a href="index.html#leaderboard">Leaderboard</a>
                 <a href="privacy.html">Privacy Policy</a>
@@ -33,12 +33,65 @@
         </nav>
 
         <main class="page-content">
+
             <section class="content-section">
                 <h1>About Slitheroo</h1>
-                <p>Slitheroo is a browser-based arcade experience inspired by the classic Snake formula and rebuilt for today’s quick-play sessions. The goal is familiar and satisfying: steer your glowing snake to eat food, grow longer, and survive as the board tightens. What makes Slitheroo different is the focus on speed, polish, and competition. It launches instantly in the browser, feels responsive on both desktop and mobile, and rewards smart movement with higher scores and better leaderboard placement.</p>
-                <p>This project was built to be simple to pick up, yet endlessly replayable. There are no installs, no sign-ups, and no complicated menus before you play — just open the page and dive into the action. For players who want to go beyond a casual run, Slitheroo’s daily and all-time leaderboards add a competitive layer that keeps every round meaningful. Whether you’re chasing a personal best, experimenting with new strategies, or just relaxing with a few quick games, Slitheroo delivers classic arcade fun with a modern neon edge.</p>
-                <p>We treat the game as a living experience, improving the feel and presentation while keeping the core gameplay pure. That balance of nostalgia and freshness is what makes Slitheroo a great fit for anyone who wants quick fun without sacrificing challenge.</p>
+                <p>Slitheroo is a browser-based arcade game built around one of gaming's most enduring formats: the snake. The goal is familiar — steer your glowing snake to eat food, grow longer, and survive as long as possible while the board tightens around you. But Slitheroo is more than a nostalgia project. It was designed from the ground up to feel fast, responsive, and genuinely competitive on any device you pick it up on.</p>
+                <p>There are no downloads, no accounts to create, and no complicated setup menus standing between you and the game. You open the page and you play. That immediacy was a deliberate design priority from the very beginning — the game should be available in the moment you want it, not a few minutes later after installation and loading screens.</p>
             </section>
+
+            <section class="content-section">
+                <h2>Why We Built It</h2>
+                <p>Snake is one of those games that has survived every era of the industry — from dedicated handheld hardware to early web browsers, app stores, and now modern browser-based platforms. The reason it keeps returning is not nostalgia alone. The mechanics are genuinely excellent. Simple rules, escalating tension, short runs, and infinite replayability make it one of the most pure game loops ever designed.</p>
+                <p>The problem with most Snake implementations today is that they feel dated or neglected. They were built quickly as portfolio projects or casual experiments and never refined. Slitheroo started from a different question: what would Snake look like if it was treated as a proper, polished product? That question drove every decision — the visual style, the sound design, the leaderboard system, the mobile controls, and the customization options.</p>
+                <p>The answer is a game that respects the original format while delivering something that feels genuinely contemporary. Neon visuals, smooth canvas rendering, swipe-optimized mobile play, real-time global leaderboards, and multiple modes all combine to create a Snake experience that holds up next to modern casual games.</p>
+            </section>
+
+            <section class="content-section">
+                <h2>How It Was Built</h2>
+                <p>Slitheroo is built entirely with standard web technologies — no frameworks, no engines, no plugins. The core game runs on an HTML5 Canvas element, with the game loop implemented in vanilla JavaScript using requestAnimationFrame for smooth, consistent rendering. The canvas is drawn fresh every frame with precise timing, giving the snake and food their characteristic glow effects without relying on any external libraries.</p>
+                <p>The visual identity — the neon palette, the glowing snake, the dark grid background — is all CSS-driven. The theme system uses CSS custom properties, which means switching between the Deep Sea, Cyberpunk, Matrix, and Sunset themes is a single attribute change that cascades instantly across the entire interface.</p>
+                <p>The leaderboard backend runs on Supabase, a PostgreSQL-based backend-as-a-service. Scores are submitted via the Supabase JavaScript client, stored in a secured table with row-level security policies, and queried through two views — one for the daily top 10 and one for the all-time top 50. The schema ensures each nickname's best score per day is the one that counts, eliminating spam submissions from inflating the boards.</p>
+                <p>Mobile support is handled through a pointer events API rather than touch events, which gives better cross-device consistency. Swipe detection uses a simple vector calculation — the direction of the swipe determines the new snake direction, with a minimum threshold to filter out accidental taps. The game also registers as a Progressive Web App via a service worker and manifest file, meaning players on mobile can install it to their home screen for a native-like experience.</p>
+            </section>
+
+            <section class="content-section">
+                <h2>What Makes Slitheroo Different</h2>
+                <p>The browser is full of Snake clones. Here is what separates Slitheroo from the pack:</p>
+                <ul class="content-list">
+                    <li><strong>Real global leaderboards:</strong> Most Snake games track your personal best in local storage. Slitheroo connects to a live database so your scores compete against real players worldwide, with daily resets that keep the competition fresh every day.</li>
+                    <li><strong>Two distinct modes:</strong> Ranked mode delivers the high-stakes classic experience with deadly walls. Zen mode wraps the edges and lets you focus on routing and flow without the wall penalty. Both modes have their own strategic depth.</li>
+                    <li><strong>Dynamic level progression:</strong> As you score higher, the game speeds up and more obstacles appear. At level 10, obstacles begin to move. The game continuously raises the stakes rather than staying at a flat difficulty.</li>
+                    <li><strong>Arena expansion:</strong> When your snake grows large enough to occupy most of the board, the arena expands. If you push to near-total occupancy, you achieve Ultimate Victory — one of the rarest outcomes in the game.</li>
+                    <li><strong>Theme rotation:</strong> Each new level shifts the color theme of the entire game, creating a visual sense of progression that goes beyond a score counter.</li>
+                    <li><strong>Installable PWA:</strong> Slitheroo can be added to your phone's home screen and runs like a native app, including offline support for the core game experience.</li>
+                </ul>
+            </section>
+
+            <section class="content-section">
+                <h2>The Team</h2>
+                <p>Slitheroo is an independent project, built and maintained by a small team passionate about browser-based gaming. We believe the web is still one of the best platforms for instant, accessible gaming — no gatekeepers, no app stores, no installs. Anyone with a browser can play, share, and compete.</p>
+                <p>We handle everything in-house: game design, frontend development, backend infrastructure, and visual identity. Being a small team means we can move quickly, respond to player feedback directly, and make changes without layers of approval. The game you are playing today will be meaningfully better in three months because we care about it as a product, not just a side project.</p>
+            </section>
+
+            <section class="content-section">
+                <h2>What's Coming Next</h2>
+                <p>Slitheroo is a living game. We treat it as an ongoing product with a genuine roadmap, not a finished artifact. Here are some of the areas we are actively developing and thinking about:</p>
+                <ul class="content-list">
+                    <li><strong>Weekly challenges:</strong> Special rule sets that change every week — limited time modes, score multipliers, unusual obstacle patterns — to give regular players a fresh reason to come back.</li>
+                    <li><strong>Friends and private leaderboards:</strong> The ability to create a private leaderboard and share it with friends, turning the game into a direct personal competition.</li>
+                    <li><strong>More customization:</strong> Additional skins, board sizes, and color themes to let players make the game feel more personal.</li>
+                    <li><strong>Replay system:</strong> A lightweight replay feature that lets you watch your best run back and analyze where you can improve.</li>
+                    <li><strong>Accessibility improvements:</strong> Better keyboard navigation, screen reader support, and motion reduction options for players who need them.</li>
+                </ul>
+                <p>If you have a feature request, a bug to report, or just want to share feedback, reach out through the <a href="contact.html">contact page</a>. We read everything.</p>
+            </section>
+
+            <section class="content-section">
+                <h2>Play Now</h2>
+                <p>The best way to understand Slitheroo is to play it. Head back to the <a href="index.html">game page</a>, set your nickname, and start your first run. The leaderboard is live, the competition is real, and your next high score is one run away.</p>
+            </section>
+
         </main>
 
         <footer class="site-footer" aria-label="Site footer">
@@ -48,11 +101,13 @@
                 <a href="contact.html">Contact</a>
                 <a href="about.html">About</a>
                 <a href="how-to-play.html">How to Play</a>
+                <a href="blog.html">Blog</a>
+                <a href="faq.html">FAQ</a>
+                <a href="changelog.html">Changelog</a>
             </div>
             <p class="footer-note">Slitheroo is a browser-based arcade experience built for quick, competitive fun.</p>
         </footer>
     </div>
-
     <script>
         const navToggle = document.querySelector('.nav-toggle');
         const navLinks = document.querySelector('.site-nav-links');
