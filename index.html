@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -17,7 +17,6 @@
     analytics_storage: 'granted',
     wait_for_update: 500
   });
-
   gtag('config', 'G-NKDKP76JY1');
 </script>
 <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
@@ -36,6 +35,101 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <meta name="description" content="Play Slitheroo online — a competitive neon Snake game with daily and all-time leaderboards. Instant browser play, no download.">
+    <style>
+        /* Inline additions for new features */
+        .combo-popup {
+            position: absolute;
+            top: 12%;
+            left: 50%;
+            transform: translateX(-50%) scale(1);
+            background: rgba(0,0,0,0.72);
+            border: 1px solid var(--snake-color);
+            color: var(--snake-color);
+            font-size: 1.05rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            padding: 0.35rem 1rem;
+            border-radius: 999px;
+            pointer-events: none;
+            z-index: 200;
+            box-shadow: 0 0 18px rgba(0,255,136,0.35);
+            animation: comboPop 0.22s cubic-bezier(0.175,0.885,0.32,1.275) forwards;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .combo-popup.fade-out {
+            opacity: 0;
+            transform: translateX(-50%) scale(1.15) translateY(-10px);
+        }
+        @keyframes comboPop {
+            from { opacity: 0; transform: translateX(-50%) scale(0.7); }
+            to   { opacity: 1; transform: translateX(-50%) scale(1); }
+        }
+        #achievement-badges {
+            display: none;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 0.6rem 0;
+            width: 100%;
+        }
+        .achievement-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: rgba(253,230,138,0.1);
+            border: 1px solid rgba(253,230,138,0.4);
+            border-radius: 999px;
+            padding: 0.3rem 0.75rem;
+            animation: badgePop 360ms ease;
+        }
+        .badge-icon { font-size: 1rem; }
+        .badge-label { font-size: 0.78rem; color: #fde68a; font-weight: 600; letter-spacing: 0.5px; }
+        .challenge-banner {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15,23,42,0.96);
+            border: 1px solid #f59e0b;
+            color: #fde68a;
+            border-radius: 12px;
+            padding: 0.7rem 1.2rem;
+            font-size: 0.9rem;
+            z-index: 20000;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            animation: splashRise 0.4s ease forwards;
+            pointer-events: none;
+            text-align: center;
+            max-width: 90vw;
+        }
+        #sound-toggle-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--text-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            line-height: 1;
+        }
+        #sound-toggle-btn:hover {
+            background: rgba(255,255,255,0.14);
+            border-color: var(--snake-color);
+        }
+        #share-btn-container {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 0.5rem 0 0.2rem;
+        }
+        .mode-selection { flex-wrap: wrap; }
+    </style>
 </head>
 
 <body>
@@ -47,6 +141,7 @@
                     <h1>SLITHEROO</h1>
                 </div>
                 <div class="header-controls">
+                    <button id="sound-toggle-btn" title="Toggle Sound (M)" aria-label="Toggle sound">🔊</button>
                     <button id="pause-btn" title="Pause Game (P)" aria-label="Pause game">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -86,7 +181,7 @@
                 <a href="terms.html" target="_blank" rel="noopener">Terms</a>
                 <a href="contact.html" target="_blank" rel="noopener">Contact</a>
             </nav>
-            <div class="version-label subtle-text">v1.3.0</div>
+            <div class="version-label subtle-text">v2.0.0</div>
         </footer>
     </div>
 
@@ -111,6 +206,7 @@
                 <div class="site-nav-links" id="site-nav-links">
                     <a href="index.html">Home</a>
                     <a href="how-to-play.html">How to Play</a>
+                    <a href="stats.html">My Stats</a>
                     <a href="about.html">About</a>
                     <a href="index.html#leaderboard">Leaderboard</a>
                     <a href="privacy.html">Privacy Policy</a>
@@ -120,55 +216,63 @@
             </nav>
 
             <div class="menu-card">
-            <h2>Ready?</h2>
-            <div class="pregame-stats">
-                <div>Best Score: <strong id="pregame-best-score">0</strong></div>
-                <div>Daily Rank: <strong id="pregame-daily-rank">Unranked</strong></div>
-            </div>
-            <div class="nickname-panel">
-                <label for="nickname-input" class="nickname-label">Nickname</label>
-                <div class="nickname-input-row">
-                    <input id="nickname-input" type="text" maxlength="16" placeholder="Enter nickname" autocomplete="off">
-                    <button id="save-nickname-btn" class="glass-btn small-pill">SAVE</button>
+                <h2>Ready?</h2>
+                <div class="pregame-stats">
+                    <div>Best Score: <strong id="pregame-best-score">0</strong></div>
+                    <div>Daily Rank: <strong id="pregame-daily-rank">Unranked</strong></div>
+                    <div style="grid-column: span 2; text-align:center;">
+                        <span id="pregame-streak" style="font-size:0.82rem; color:#fb923c; font-weight:600;"></span>
+                    </div>
                 </div>
-                <p id="nickname-error" class="inline-error is-hidden">Nickname is required.</p>
-                <div class="nickname-current">
-                    <span>Playing as: <strong id="current-nickname">Not set</strong></span>
-                    <button id="change-nickname-btn" class="glass-btn tiny">CHANGE</button>
+                <div class="nickname-panel">
+                    <label for="nickname-input" class="nickname-label">Nickname</label>
+                    <div class="nickname-input-row">
+                        <input id="nickname-input" type="text" maxlength="16" placeholder="Enter nickname" autocomplete="off">
+                        <button id="save-nickname-btn" class="glass-btn small-pill">SAVE</button>
+                    </div>
+                    <p id="nickname-error" class="inline-error is-hidden">Nickname is required.</p>
+                    <div class="nickname-current">
+                        <span>Playing as: <strong id="current-nickname">Not set</strong></span>
+                        <button id="change-nickname-btn" class="glass-btn tiny">CHANGE</button>
+                    </div>
                 </div>
-            </div>
-            <div class="mode-selection">
-                <button class="mode-btn active" data-mode="RANKED">RANKED</button>
-                <button class="mode-btn" data-mode="ZEN">ZEN</button>
-            </div>
-            <p id="mode-desc">Traditional Snake. Walls are deadly.</p>
-            <div class="difficulty-selection">
-                <h3>Difficulty</h3>
-                <div class="diff-btns">
-                    <button class="diff-btn active" data-diff="NORMAL">NORMAL</button>
-                    <button class="diff-btn" data-diff="HARD">HARD</button>
+
+                <!-- Mode selection — now 4 modes -->
+                <div class="mode-selection">
+                    <button class="mode-btn active" data-mode="RANKED">RANKED</button>
+                    <button class="mode-btn" data-mode="ZEN">ZEN</button>
+                    <button class="mode-btn" data-mode="TIMED">TIMED</button>
+                    <button class="mode-btn" data-mode="DAILY">DAILY</button>
                 </div>
-            </div>
-            <div class="menu-actions">
-                <button id="start-btn" class="glow-btn">TAP TO START</button>
-                <button id="customize-btn" class="glass-btn">CUSTOMIZE</button>
-            </div>
-            <section class="leaderboard-panel" aria-label="Leaderboards">
-                <div class="leaderboard-tabs">
-                    <button id="lb-tab-daily" class="lb-tab active" type="button">Daily Top 10</button>
-                    <button id="lb-tab-alltime" class="lb-tab" type="button">All-Time Top 50</button>
+                <p id="mode-desc">Traditional Snake. Walls are deadly.</p>
+
+                <div class="difficulty-selection">
+                    <h3>Difficulty</h3>
+                    <div class="diff-btns">
+                        <button class="diff-btn active" data-diff="NORMAL">NORMAL</button>
+                        <button class="diff-btn" data-diff="HARD">HARD</button>
+                    </div>
                 </div>
-                <p id="leaderboard-status" class="leaderboard-status">Loading leaderboard...</p>
-                <ol id="daily-leaderboard-list" class="leaderboard-list"></ol>
-                <ol id="alltime-leaderboard-list" class="leaderboard-list is-hidden"></ol>
-            </section>
+                <div class="menu-actions">
+                    <button id="start-btn" class="glow-btn">TAP TO START</button>
+                    <button id="customize-btn" class="glass-btn">CUSTOMIZE</button>
+                </div>
+                <section class="leaderboard-panel" aria-label="Leaderboards">
+                    <div class="leaderboard-tabs">
+                        <button id="lb-tab-daily" class="lb-tab active" type="button">Daily Top 10</button>
+                        <button id="lb-tab-alltime" class="lb-tab" type="button">All-Time Top 50</button>
+                    </div>
+                    <p id="leaderboard-status" class="leaderboard-status">Loading leaderboard...</p>
+                    <ol id="daily-leaderboard-list" class="leaderboard-list"></ol>
+                    <ol id="alltime-leaderboard-list" class="leaderboard-list is-hidden"></ol>
+                </section>
             </div>
 
             <main class="page-content">
                 <section class="content-section" id="about">
                     <h2>About the Game</h2>
                     <p>Slitheroo is a modern, neon-flavored take on the classic Snake game, built for quick sessions and real competition. You guide a glowing snake across a tight grid, grabbing food to grow longer while trying to avoid walls and your own tail. Each bite raises the pressure as the space shrinks and your path options narrow. The loop is simple, but the tension builds fast, which is exactly why one more run always feels possible.</p>
-                    <p>This version is designed to launch instantly in your browser with no downloads or installs. That means you can jump in on desktop or mobile at any time, play a few rounds, and come back later to climb higher. Daily and all-time leaderboards keep the rivalry alive, so every game becomes a chance to beat your personal best or chase the global top spots. With quick rounds, skill-based scoring, and endless replayability, Slitheroo is perfect for short breaks and long marathons alike.</p>
+                    <p>This version is designed to launch instantly in your browser with no downloads or installs. Daily and all-time leaderboards keep the rivalry alive, so every game becomes a chance to beat your personal best or chase the global top spots.</p>
                 </section>
 
                 <section class="content-section" id="how-to-play">
@@ -177,6 +281,7 @@
                         <li>Use arrow keys on desktop or swipe on mobile to change direction.</li>
                         <li>Eat food to grow longer and increase your score.</li>
                         <li>Avoid crashing into walls or your own body.</li>
+                        <li>Grab glowing power-ups for shields, speed boosts, and more.</li>
                         <li>Push for the highest score and climb the leaderboard.</li>
                     </ul>
                     <p class="inline-link">Want deeper tips? Visit the <a href="how-to-play.html">full How to Play guide</a>.</p>
@@ -185,18 +290,22 @@
                 <section class="content-section" id="features">
                     <h2>Game Features</h2>
                     <ul class="content-list">
-                        <li>Fast browser gameplay with instant loading</li>
-                        <li>Mobile-friendly controls with swipe support</li>
-                        <li>Global leaderboard competition</li>
-                        <li>Daily high scores to chase every day</li>
-                        <li>Optional continue-after-death feature</li>
+                        <li>4 game modes: Ranked, Zen, Timed &amp; Daily Challenge</li>
+                        <li>Power-ups: Shield, 2× Score Multiplier, Slow Motion, Ghost</li>
+                        <li>3 food types with different point values</li>
+                        <li>Combo streaks with visual &amp; audio feedback</li>
+                        <li>12 achievements to unlock</li>
+                        <li>Personal stats page tracking your history</li>
+                        <li>Screen shake, particles &amp; Web Audio sound effects</li>
+                        <li>Share your score as an image or send a challenge link</li>
+                        <li>Daily play streak tracker</li>
                     </ul>
-                    <p class="inline-link">Explore the community at our <a href="blog.html">strategy blog</a>.</p>
+                    <p class="inline-link">Check your progress on the <a href="stats.html">My Stats page</a>.</p>
                 </section>
 
                 <section class="content-section" id="leaderboard">
                     <h2>Leaderboard Competition</h2>
-                    <p>Every run in Slitheroo can be recorded on the global leaderboard, where daily and all-time rankings reset the race. Use a consistent nickname, track your climb, and challenge friends to beat your best score. Daily rankings reward sharp focus, while the all-time board honors the most skilled players over long streaks. If you want to stay at the top, keep practicing and refine your pathing with every round.</p>
+                    <p>Every run in Slitheroo can be recorded on the global leaderboard, where daily and all-time rankings reset the race. Use a consistent nickname, track your climb, and challenge friends to beat your best score. Daily rankings reward sharp focus, while the all-time board honors the most skilled players over long streaks.</p>
                 </section>
             </main>
 
@@ -207,6 +316,7 @@
                     <a href="contact.html">Contact</a>
                     <a href="about.html">About</a>
                     <a href="how-to-play.html">How to Play</a>
+                    <a href="stats.html">My Stats</a>
                 </div>
                 <p class="footer-note">Slitheroo is a browser-based arcade experience built for quick, competitive fun.</p>
             </footer>
@@ -216,7 +326,6 @@
     <div id="customize-screen" class="overlay hidden">
         <div class="menu-card">
             <h2>Customization</h2>
-
             <div class="custom-section">
                 <h3>Skins</h3>
                 <div class="options-grid" id="skins-grid">
@@ -226,7 +335,6 @@
                     <div class="option" data-skin="glow">Pulse</div>
                 </div>
             </div>
-
             <div class="custom-section">
                 <h3>Themes</h3>
                 <div class="options-grid" id="themes-grid">
@@ -236,7 +344,6 @@
                     <div class="option" data-theme="sunset">Sunset</div>
                 </div>
             </div>
-
             <div class="custom-section" id="zen-options">
                 <h3>Zen Mode Settings</h3>
                 <div class="toggle-control">
@@ -254,7 +361,6 @@
     <div id="pause-screen" class="overlay hidden">
         <div class="menu-card">
             <h2>Paused</h2>
-
             <div class="summary-grid">
                 <div class="summary-item">
                     <span class="label">Score</span>
@@ -277,7 +383,6 @@
                     <span id="pause-mode" class="value">RANKED</span>
                 </div>
             </div>
-
             <div class="menu-actions">
                 <button id="resume-btn" class="glow-btn">RESUME</button>
                 <button id="pause-main-menu-btn" class="glass-btn">MAIN MENU</button>
@@ -288,6 +393,9 @@
     <div id="game-over-screen" class="overlay hidden">
         <div class="menu-card">
             <h2 class="danger-text">GAME OVER</h2>
+
+            <!-- Achievement unlocks this run -->
+            <div id="achievement-badges"></div>
 
             <div class="summary-grid">
                 <div class="summary-item">
@@ -311,12 +419,16 @@
                     <span id="summary-mode" class="value">RANKED</span>
                 </div>
                 <div class="summary-item full-width highlight">
-                    <span class="label">Closest to Ultimate Victory</span>
+                    <span class="label">Best Board Fill</span>
                     <span id="summary-best-occupancy" class="value">0%</span>
                 </div>
             </div>
 
             <div id="new-high-score-badge" class="new-high-score-badge is-hidden">New High Score!</div>
+
+            <!-- Share buttons (rendered by JS) -->
+            <div id="share-btn-container"></div>
+
             <div class="menu-actions">
                 <button id="restart-btn" class="glow-btn">ONE MORE BITE</button>
                 <button id="main-menu-btn" class="glass-btn">MAIN MENU</button>
@@ -341,17 +453,15 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
     <script>
-        const navToggle = document.querySelector('.nav-toggle');
-        const navLinks = document.querySelector('.site-nav-links');
-        if (navToggle && navLinks) {
-            navToggle.addEventListener('click', () => {
-                const expanded = navToggle.getAttribute('aria-expanded') === 'true';
-                navToggle.setAttribute('aria-expanded', String(!expanded));
-                navLinks.classList.toggle('open');
+        // Nav toggles (multiple instances on page)
+        document.querySelectorAll('.nav-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const expanded = btn.getAttribute('aria-expanded') === 'true';
+                btn.setAttribute('aria-expanded', String(!expanded));
+                btn.closest('.site-nav')?.querySelector('.site-nav-links')?.classList.toggle('open');
             });
-        }
+        });
     </script>
 </body>
 
 </html>
-

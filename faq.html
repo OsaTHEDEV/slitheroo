@@ -4,155 +4,374 @@
     <meta charset="UTF-8">
     <meta name="google-adsense-account" content="ca-pub-9247801614753906">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slitheroo FAQ – Frequently Asked Questions</title>
-    <meta name="description" content="Find answers to common questions about Slitheroo — gameplay, leaderboards, scoring, nicknames, modes, and technical issues.">
+    <title>Slitheroo FAQ — Frequently Asked Questions</title>
+    <meta name="description" content="Answers to the most common questions about Slitheroo: controls, scoring, game modes, leaderboards, power-ups, achievements, and more.">
+    <link rel="canonical" href="https://slitheroo.online/faq.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Slitheroo FAQ — Frequently Asked Questions">
+    <meta property="og:description" content="Everything you need to know about playing Slitheroo: controls, modes, leaderboards, power-ups, and achievements.">
+    <meta property="og:url" content="https://slitheroo.online/faq.html">
+    <meta property="og:site_name" content="Slitheroo">
+
+    <!-- FAQPage JSON-LD — unlocks accordion rich results in Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I control the snake on desktop?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use the arrow keys or WASD keys to change direction. Press P or Escape to pause the game, and press M to toggle sound on or off."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I play on mobile?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Swipe in the direction you want the snake to move. The game is fully touch-optimized. Tap the screen first to focus if the snake isn't responding to swipes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the different game modes in Slitheroo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Slitheroo has four modes. Ranked is the classic competitive mode where walls are deadly and scores submit to the global leaderboard. Zen mode wraps the snake around walls, making it more relaxed. Timed mode gives you 60 seconds to score as much as possible. Daily Challenge uses a seeded board so every player faces the same layout for that day, with one attempt allowed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the power-ups and what do they do?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "There are four power-ups. Shield absorbs one fatal collision from a wall or obstacle. Score Multiplier doubles all points earned while active. Slow Motion reduces the effective game speed temporarily for extra reaction time. Ghost lets the snake pass through its own body for a short period. Power-ups appear randomly on the board during a run and are collected by running over them."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the different food types?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Normal food (red) is worth 10 points and spawns most frequently. Bonus food (yellow) is worth 25 points and spawns less often. Mega food (cyan) is worth 50 points and is the rarest. All three types appear randomly based on weighted spawn rates."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the leaderboard work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Slitheroo has two leaderboards: a Daily Top 10 that resets every day, and an All-Time Top 50 that tracks the highest scores ever recorded. Scores are submitted automatically after each Ranked mode run. You need a nickname saved to submit scores. Only the highest score per player per day counts on the daily board."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I set or change my nickname?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Enter your nickname in the text field on the main menu and click Save. Nicknames must be 3 to 16 characters and can include letters, numbers, spaces, underscores, and hyphens. Click Change to edit your nickname at any time. Your nickname is stored locally in your browser."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are achievements and how do I unlock them?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Achievements are milestone rewards that unlock automatically when you meet specific conditions during play. Examples include scoring 100 points, reaching level 5, playing 7 days in a row, and using the Ghost power-up. Newly unlocked achievements appear on the game over screen. You can view all 12 achievements and your progress on the Stats page."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the day streak and how does it work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The day streak tracks how many consecutive days you have played Slitheroo. Playing at least one game each calendar day extends your streak. Missing a day resets it back to 1. Your current streak is shown on the main menu and on the Stats page. Reaching a 3-day streak unlocks the Daily Devotee achievement, and a 7-day streak unlocks Week Warrior."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the Daily Challenge mode work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Daily Challenge uses a seeded random number generator tied to the current date, so every player in the world gets the same board, food sequence, and power-up positions for that day. You get one recorded attempt per day. Your best Daily Challenge score is tracked on the Stats page."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I share my score?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "After a run ends, two sharing options appear on the game over screen. The Share Score button exports a branded PNG image of your score that you can save and share anywhere. The Challenge Link button copies a URL to your clipboard that shows a challenge banner to anyone who opens it, displaying your score for them to beat."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Slitheroo save my progress?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. All personal data is stored locally in your browser using localStorage. This includes your high score, nickname, stats, achievements, day streak, and preferences. No account or sign-up is required. Data is stored per browser and per device, so clearing your browser data or switching devices will not carry your progress over."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I play Slitheroo offline?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Slitheroo installs as a Progressive Web App with a service worker that caches all game files. After your first visit, the game will load and play fully offline. Leaderboard features require an internet connection since they communicate with the Supabase backend."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the combo streak system?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A combo streak counts how many food items you eat within a 2.5-second window. Reaching a streak of 3 or higher triggers a visual popup and an audio cue. Your highest combo streak of the run is tracked for the Combo King achievement. Streaks reset if too much time passes between pickups."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I mute the sound?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Press the M key at any time during gameplay or while on the main menu to toggle sound on or off. You can also click the sound button in the top-right corner of the game header. All sound effects in Slitheroo are generated using the Web Audio API with no external audio files."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Continue feature?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "When you die in a standard Ranked or Zen run, you may be offered one continue per day. A continue revives your snake from the position just before your fatal move. The continue feature is not available in Daily Challenge mode."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I view my personal stats?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Visit the Stats page linked in the navigation menu. It shows your total games played, best score, average score, best level reached, total food eaten, and total power-ups used. It also displays your full achievement grid showing which ones you have unlocked, your current day streak, and your best Daily Challenge score."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Slitheroo free to play?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Slitheroo is completely free to play in the browser with no downloads, sign-ups, or purchases required. The game may display optional rewarded ads that offer in-game benefits such as a continue after death. These ads are optional and do not affect normal gameplay."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What browsers does Slitheroo support?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Slitheroo works on any modern browser that supports HTML5 Canvas and the Web Audio API. This includes Chrome, Firefox, Safari, and Edge on both desktop and mobile. For the best experience on mobile, use Chrome or Safari on a recent iOS or Android device."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I reset my stats and achievements?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Go to the Stats page and click the Reset Stats button at the bottom of the stats section. You will be asked to confirm before anything is deleted. This permanently removes all locally stored stats, achievements, streak data, and daily scores. It cannot be undone."
+          }
+        }
+      ]
+    }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .faq-item { border-bottom: 1px solid rgba(148,163,184,0.15); padding: 0.9rem 0; }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-q {
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 1rem; line-height: 1.45;
+        }
+        .faq-q::after { content: '+'; font-size: 1.25rem; opacity: 0.6; flex-shrink: 0; transition: transform 0.2s ease; }
+        .faq-item.open .faq-q::after { transform: rotate(45deg); opacity: 1; }
+        .faq-a { display: none; margin-top: 0.6rem; line-height: 1.7; opacity: 0.88; font-size: 0.95rem; }
+        .faq-item.open .faq-a { display: block; }
+    </style>
 </head>
 <body class="page">
-    <div class="site-shell">
-        <nav class="site-nav" aria-label="Primary">
-            <a class="brand-link" href="index.html" aria-label="Slitheroo home">
-                <img src="assets/favicon-32.png" alt="" width="24" height="24" decoding="async" loading="eager">
-                <span>Slitheroo</span>
-            </a>
-            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-links">Menu</button>
-            <div class="site-nav-links" id="site-nav-links">
-                <a href="index.html">Home</a>
-                <a href="how-to-play.html">How to Play</a>
-                <a href="blog.html">Blog</a>
-                <a href="faq.html">FAQ</a>
-                <a href="about.html">About</a>
-                <a href="index.html#leaderboard">Leaderboard</a>
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="terms.html">Terms of Service</a>
-                <a href="contact.html">Contact</a>
+<div class="site-shell">
+    <nav class="site-nav" aria-label="Primary">
+        <a class="brand-link" href="index.html" aria-label="Slitheroo home">
+            <img src="assets/favicon-32.png" alt="" width="24" height="24" decoding="async" loading="eager">
+            <span>Slitheroo</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-links">Menu</button>
+        <div class="site-nav-links" id="site-nav-links">
+            <a href="index.html">Home</a>
+            <a href="how-to-play.html">How to Play</a>
+            <a href="blog.html">Blog</a>
+            <a href="faq.html">FAQ</a>
+            <a href="stats.html">My Stats</a>
+            <a href="about.html">About</a>
+            <a href="index.html#leaderboard">Leaderboard</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <section class="content-section">
+            <h1>Frequently Asked Questions</h1>
+            <p>Everything you need to know about playing Slitheroo. Click any question to expand the answer. If your question isn't here, reach out via the <a href="contact.html">contact page</a>.</p>
+
+            <div id="faq-list" style="margin-top: 1.2rem;">
+
+                <div class="faq-item">
+                    <div class="faq-q">How do I control the snake on desktop?</div>
+                    <div class="faq-a">Use the arrow keys or WASD keys to change direction. Press P or Escape to pause the game, and press M to toggle sound on or off.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">How do I play on mobile?</div>
+                    <div class="faq-a">Swipe in the direction you want the snake to move. The game is fully touch-optimized. Tap the screen first to focus if the snake isn't responding to swipes.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">What are the different game modes in Slitheroo?</div>
+                    <div class="faq-a">Slitheroo has four modes. <strong>Ranked</strong> is the classic competitive mode where walls are deadly and scores submit to the global leaderboard. <strong>Zen</strong> wraps the snake around walls for a more relaxed experience. <strong>Timed</strong> gives you 60 seconds to score as much as possible. <strong>Daily Challenge</strong> uses a seeded board so every player faces the same layout that day, with one attempt allowed.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">What are the power-ups and what do they do?</div>
+                    <div class="faq-a">There are four power-ups. <strong>Shield</strong> absorbs one fatal collision. <strong>Score Multiplier</strong> doubles all points earned while active. <strong>Slow Motion</strong> reduces game speed temporarily. <strong>Ghost</strong> lets the snake pass through its own body for a short period. Power-ups appear randomly on the board and are collected by running over them.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">What are the different food types?</div>
+                    <div class="faq-a"><strong>Normal food</strong> (red) is worth 10 points and spawns most often. <strong>Bonus food</strong> (yellow) is worth 25 points and spawns less frequently. <strong>Mega food</strong> (cyan) is worth 50 points and is the rarest. All three appear based on weighted spawn rates.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">How does the leaderboard work?</div>
+                    <div class="faq-a">There are two leaderboards: a Daily Top 10 that resets every day, and an All-Time Top 50. Scores submit automatically after each Ranked run. Only the highest score per player per day counts on the daily board. You need a nickname saved to submit scores.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">How do I set or change my nickname?</div>
+                    <div class="faq-a">Enter your nickname in the text field on the main menu and click Save. Nicknames must be 3–16 characters and can include letters, numbers, spaces, underscores, and hyphens. Click Change to edit at any time.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">What are achievements and how do I unlock them?</div>
+                    <div class="faq-a">Achievements unlock automatically when you meet specific conditions. Examples include scoring 100 points, reaching level 5, playing 7 days in a row, and using the Ghost power-up. Newly unlocked achievements appear on the game over screen. View all 12 on the <a href="stats.html">Stats page</a>.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">What is the day streak and how does it work?</div>
+                    <div class="faq-a">The day streak counts consecutive days you have played Slitheroo. Playing at least one game each calendar day extends your streak. Missing a day resets it to 1. Reaching a 3-day streak unlocks Daily Devotee; a 7-day streak unlocks Week Warrior.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">How does Daily Challenge mode work?</div>
+                    <div class="faq-a">Daily Challenge uses a seeded random sequence tied to the current date. Every player worldwide gets the same board, food positions, and power-up placements that day. You get one recorded attempt. Your best score is saved on the <a href="stats.html">Stats page</a>.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">How do I share my score?</div>
+                    <div class="faq-a">After a run, two options appear on the game over screen. <strong>Share Score</strong> exports a branded PNG image you can save and share anywhere. <strong>Challenge Link</strong> copies a URL to your clipboard that shows a challenge banner to anyone who opens it.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">Does Slitheroo save my progress?</div>
+                    <div class="faq-a">Yes. All personal data — high score, nickname, stats, achievements, streak, and preferences — is stored locally using localStorage. No account or sign-up required. Clearing your browser data will remove saved progress.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">Can I play Slitheroo offline?</div>
+                    <div class="faq-a">Yes. Slitheroo installs as a Progressive Web App with a service worker that caches all game files after your first visit. Leaderboard features require an internet connection.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">What is the combo streak system?</div>
+                    <div class="faq-a">A combo streak counts food items eaten within a 2.5-second window. Reaching 3 or higher triggers a visual popup and audio cue. Your highest combo is tracked for the Combo King achievement.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">How do I mute the sound?</div>
+                    <div class="faq-a">Press M at any time to toggle sound, or click the sound button in the top-right of the game header. All audio is generated via the Web Audio API — no external files are loaded.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">What is the Continue feature?</div>
+                    <div class="faq-a">When you die in a standard Ranked or Zen run, you may be offered one continue per day that revives your snake from just before the fatal move. Continues are not available in Daily Challenge mode.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">How do I view my personal stats?</div>
+                    <div class="faq-a">Visit the <a href="stats.html">Stats page</a> from the navigation menu. It shows games played, best score, average score, best level, food eaten, power-ups used, achievement progress, day streak, and your best Daily Challenge score.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">Is Slitheroo free to play?</div>
+                    <div class="faq-a">Yes, completely free with no downloads, sign-ups, or purchases required. The game may display optional rewarded ads offering in-game benefits. These are never required to play.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">What browsers does Slitheroo support?</div>
+                    <div class="faq-a">Any modern browser supporting HTML5 Canvas and the Web Audio API: Chrome, Firefox, Safari, and Edge on desktop and mobile. For the best mobile experience, use Chrome or Safari on a recent iOS or Android device.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">How do I reset my stats and achievements?</div>
+                    <div class="faq-a">Go to the <a href="stats.html">Stats page</a> and click Reset Stats. You will be asked to confirm. This permanently removes all locally stored stats, achievements, streak data, and daily scores and cannot be undone.</div>
+                </div>
+
             </div>
-        </nav>
+        </section>
 
-        <main class="page-content">
+        <section class="content-section">
+            <h2>Still Have Questions?</h2>
+            <p>If you couldn't find the answer you were looking for, check the <a href="how-to-play.html">How to Play guide</a> for detailed controls and strategy, or visit the <a href="blog.html">blog</a> for in-depth articles on game modes and advanced techniques. You can also contact us directly via the <a href="contact.html">contact page</a>.</p>
+        </section>
+    </main>
 
-            <section class="content-section">
-                <h1>Frequently Asked Questions</h1>
-                <p>Everything you need to know about playing Slitheroo, understanding the leaderboard, and getting the most out of the game. If your question is not answered here, reach out through the <a href="contact.html">contact page</a>.</p>
-            </section>
-
-            <section class="content-section">
-                <h2>Gameplay</h2>
-
-                <h3 style="margin: 1rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">How do I control the snake?</h3>
-                <p>On desktop, use the arrow keys or WASD keys to change direction. On mobile, swipe in the direction you want the snake to turn. The swipe can be performed anywhere on the game canvas. If the game is not responding to swipes, tap the canvas once to give it focus, then try again.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">Can I pause the game?</h3>
-                <p>Yes. On desktop, press P or Escape to pause at any time. On mobile, the pause button is in the top right corner of the game header. The pause screen shows your current score, level, snake length, and board occupancy while the game is frozen.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">What is the difference between Ranked and Zen mode?</h3>
-                <p>In Ranked mode, the walls are solid boundaries. Hitting any edge of the board ends your run. Obstacles appear as you level up, and your score is submitted to the global leaderboard. In Zen mode, the walls wrap around — your snake exits one edge and reappears on the opposite side. Zen mode is better for relaxed practice sessions. Zen scores are not submitted to the competitive leaderboard.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">What do the difficulty settings change?</h3>
-                <p>Normal difficulty levels up every 50 points. Hard difficulty levels up every 100 points. Both settings affect how quickly the game speeds up and how frequently obstacles are added. Hard mode accelerates the difficulty progression more aggressively, creating tighter board conditions earlier in the run.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">How does scoring work?</h3>
-                <p>Each food pickup adds 10 points and grows your snake by one segment. There are no multipliers or bonus food types in the current version. Your total score is determined entirely by how many food items you eat before your run ends. Higher levels do not add bonus points but make each subsequent pickup harder to earn.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">What is the streak counter?</h3>
-                <p>The streak counter tracks how quickly you are eating consecutive food items. If you eat the next piece within the combo window after the previous one, your streak increases. Maintaining a high streak reflects efficient, well-routed play. The streak resets if too much time passes between food pickups.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">What is arena expansion?</h3>
-                <p>When your snake occupies more than 80 percent of the board tiles, the board expands from 20x20 to 30x30 tiles, giving you more space to work with. This is a reward for extraordinary performance. If you continue growing after expansion and exceed 95 percent occupancy of the larger board, you trigger the Ultimate Victory condition — the highest possible outcome in a single run.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">What is the continue feature?</h3>
-                <p>Once per day, you can activate a continue after a Ranked run ends. The continue revives your snake at its last safe position with a brief grace period to recover. After using a continue, your run is finalized when it ends the second time. The continue resets at midnight UTC each day. It is worth saving for high-scoring runs.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">Do obstacles move?</h3>
-                <p>In Ranked mode, obstacles appear starting at level 2 and accumulate as you level up. At level 10 and above, obstacles begin moving — they shift one tile in a random direction each interval. This makes high-level play significantly harder because the board is no longer static. Zen mode with obstacles enabled follows the same movement rules.</p>
-            </section>
-
-            <section class="content-section">
-                <h2>Leaderboard and Nicknames</h2>
-
-                <h3 style="margin: 1rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">Do I need an account to play?</h3>
-                <p>No account is required. You only need to set a nickname before your first run. The nickname is saved in your browser's local storage and persists between sessions. You do not need to register, log in, or provide any personal information to play or appear on the leaderboard.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">What are the nickname requirements?</h3>
-                <p>Nicknames must be between 3 and 16 characters. Allowed characters are letters (A–Z, a–z), numbers (0–9), spaces, underscores (_), and hyphens (-). The nickname "Anonymous" is reserved and cannot be used. Nicknames that violate these rules will be rejected before submission.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">What happens if I change my nickname?</h3>
-                <p>Your leaderboard history is tied to your nickname. If you change it, your previous scores will still appear on the board under the old name, but future scores will be attributed to the new one. For leaderboard consistency, we recommend keeping the same nickname throughout your play sessions.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">When does the daily leaderboard reset?</h3>
-                <p>The daily leaderboard resets at midnight UTC every day. Each player's best single score for the current day is used for their daily ranking. The all-time leaderboard does not reset — it shows the highest score each nickname has ever achieved.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">How many scores are on the leaderboard?</h3>
-                <p>The daily leaderboard shows the top 10 scores for the current day. The all-time leaderboard shows the top 50 scores of all time. Both boards show one entry per nickname — your best score, not all your scores.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">My score submission failed. What should I do?</h3>
-                <p>If your score fails to submit, a retry button will appear on the game over screen. Tap it to attempt the submission again. Score submission failures are usually caused by a temporary network issue. If retries continue to fail, check your internet connection and try again. Scores submitted through the retry button use the same payload as the original attempt, so there is no risk of duplicate submissions from retrying.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">Are Zen mode scores submitted to the leaderboard?</h3>
-                <p>No. Only Ranked mode scores are submitted to the global leaderboard. Zen mode is designed for practice and relaxed play, so its scores are intentionally kept separate from the competitive ranking.</p>
-            </section>
-
-            <section class="content-section">
-                <h2>Customization and Settings</h2>
-
-                <h3 style="margin: 1rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">How do I change the snake skin or theme?</h3>
-                <p>From the main menu, tap the Customize button. The customization screen lets you choose from four snake skins (Neon, Retro, Striped, Pulse) and four themes (Deep Sea, Cyberpunk, Matrix, Sunset). Changes apply immediately and are saved locally. Note that the theme changes automatically during gameplay as you level up — the customization setting determines your starting theme.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">Can I play in fullscreen?</h3>
-                <p>Yes. When you start a game, Slitheroo will request fullscreen mode automatically on supported browsers. You can also tap the game canvas to trigger fullscreen. On mobile, adding the game to your home screen as a PWA gives you a fullscreen experience without the browser toolbar.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">Can I install Slitheroo on my phone?</h3>
-                <p>Yes. Slitheroo is a Progressive Web App. On most mobile browsers, you can tap the Share button and select "Add to Home Screen" to install it. Once installed, it launches in fullscreen like a native app and supports offline play for the core game (leaderboard features require an internet connection).</p>
-            </section>
-
-            <section class="content-section">
-                <h2>Technical Questions</h2>
-
-                <h3 style="margin: 1rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">The game is running slowly on my device. What can I do?</h3>
-                <p>Slitheroo is designed to run smoothly on most devices. If you experience slowness, try closing other browser tabs to free up memory, ensure your browser is up to date, and disable any browser extensions that might be interfering. The game performs best in Chrome and Safari. If issues persist on a specific device, please let us know through the <a href="contact.html">contact page</a>.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">My high score disappeared. What happened?</h3>
-                <p>Your personal high score is stored in your browser's local storage. It will be lost if you clear your browser storage, use a private browsing window, or switch to a different browser or device. Leaderboard scores stored on the server are permanent and tied to your nickname, but your local personal best is device-specific.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">Does the game work offline?</h3>
-                <p>The core game works offline thanks to the service worker cache. You can play snake, see your local high score, and use all modes without an internet connection. Leaderboard loading, score submission, and leaderboard display all require a connection. The game will show an appropriate message when leaderboard features are unavailable offline.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">Which browsers does Slitheroo support?</h3>
-                <p>Slitheroo works in all modern browsers including Chrome, Firefox, Safari, and Edge. It is optimized for the latest versions of each. Very old browser versions (more than three years old) may have rendering differences or missing features. Mobile browsers on iOS and Android are fully supported.</p>
-
-                <h3 style="margin: 1.2rem 0 0.4rem; font-size: 1rem; color: var(--accent-color);">How do I report a bug?</h3>
-                <p>Please describe the issue through the <a href="contact.html">contact page</a>. Include the device and browser you are using, what you were doing when the issue occurred, and whether it is reproducible. We take bug reports seriously and typically address confirmed issues in the next update.</p>
-            </section>
-
-        </main>
-
-        <footer class="site-footer" aria-label="Site footer">
-            <div class="footer-links">
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="terms.html">Terms of Service</a>
-                <a href="contact.html">Contact</a>
-                <a href="about.html">About</a>
-                <a href="how-to-play.html">How to Play</a>
-                <a href="blog.html">Blog</a>
-                <a href="faq.html">FAQ</a>
-                <a href="changelog.html">Changelog</a>
-            </div>
-            <p class="footer-note">Slitheroo is a browser-based arcade experience built for quick, competitive fun.</p>
-        </footer>
-    </div>
-    <script>
-        const navToggle = document.querySelector('.nav-toggle');
-        const navLinks = document.querySelector('.site-nav-links');
-        if (navToggle && navLinks) {
-            navToggle.addEventListener('click', () => {
-                const expanded = navToggle.getAttribute('aria-expanded') === 'true';
-                navToggle.setAttribute('aria-expanded', String(!expanded));
-                navLinks.classList.toggle('open');
-            });
-        }
-    </script>
+    <footer class="site-footer" aria-label="Site footer">
+        <div class="footer-links">
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="contact.html">Contact</a>
+            <a href="about.html">About</a>
+            <a href="how-to-play.html">How to Play</a>
+            <a href="blog.html">Blog</a>
+            <a href="faq.html">FAQ</a>
+        </div>
+        <p class="footer-note">Slitheroo is a browser-based arcade experience built for quick, competitive fun.</p>
+    </footer>
+</div>
+<script>
+    document.querySelectorAll('.faq-q').forEach(q => {
+        q.addEventListener('click', () => {
+            const item = q.closest('.faq-item');
+            const wasOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!wasOpen) item.classList.add('open');
+        });
+    });
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.site-nav-links');
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+            const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+            navToggle.setAttribute('aria-expanded', String(!expanded));
+            navLinks.classList.toggle('open');
+        });
+    }
+</script>
 </body>
 </html>

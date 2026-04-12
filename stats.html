@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google-adsense-account" content="ca-pub-9247801614753906">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slitheroo — My Stats & Achievements</title>
+    <meta name="description" content="View your personal Slitheroo stats, achievement progress, and play history.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Inline additions so this page is self-contained */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.85rem;
+            margin: 1rem 0;
+        }
+        .stat-card {
+            background: rgba(0,0,0,0.28);
+            border: 1px solid rgba(148,163,184,0.18);
+            border-radius: 14px;
+            padding: 1rem 0.9rem;
+            text-align: center;
+        }
+        .stat-card .stat-val {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            display: block;
+            text-shadow: 0 0 12px rgba(56,189,248,0.35);
+        }
+        .stat-card .stat-lbl {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            opacity: 0.6;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.8rem;
+        }
+        .ach-card {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(148,163,184,0.15);
+            border-radius: 12px;
+            padding: 0.85rem 0.8rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .ach-card.unlocked {
+            border-color: rgba(253,230,138,0.45);
+            background: rgba(253,230,138,0.07);
+        }
+        .ach-card .ach-icon {
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            filter: grayscale(1);
+            opacity: 0.3;
+            transition: filter 0.2s, opacity 0.2s;
+        }
+        .ach-card.unlocked .ach-icon { filter: none; opacity: 1; }
+        .ach-card .ach-info { min-width: 0; }
+        .ach-card .ach-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-color);
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+        .ach-card.unlocked .ach-name { color: #fde68a; }
+        .ach-card .ach-desc {
+            font-size: 0.72rem;
+            opacity: 0.55;
+            line-height: 1.35;
+        }
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(251,146,60,0.15);
+            border: 1px solid rgba(251,146,60,0.4);
+            color: #fb923c;
+            border-radius: 999px;
+            padding: 0.3rem 0.9rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--accent-color);
+            border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+        .reset-btn {
+            background: rgba(248,113,113,0.1);
+            border: 1px solid rgba(248,113,113,0.35);
+            color: #fca5a5;
+            padding: 0.4rem 1rem;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 0.78rem;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+        }
+        .reset-btn:hover { background: rgba(248,113,113,0.22); }
+    </style>
+</head>
+<body class="page">
+<div class="site-shell">
+    <nav class="site-nav" aria-label="Primary">
+        <a class="brand-link" href="index.html" aria-label="Slitheroo home">
+            <img src="assets/favicon-32.png" alt="" width="24" height="24" decoding="async" loading="eager">
+            <span>Slitheroo</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-links">Menu</button>
+        <div class="site-nav-links" id="site-nav-links">
+            <a href="index.html">Home</a>
+            <a href="how-to-play.html">How to Play</a>
+            <a href="stats.html">My Stats</a>
+            <a href="about.html">About</a>
+            <a href="index.html#leaderboard">Leaderboard</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <section class="content-section">
+            <h1>My Stats</h1>
+            <p id="welcome-line">Your personal Slitheroo performance summary, stored locally in your browser.</p>
+
+            <div id="streak-display"></div>
+
+            <div class="stats-grid" id="stats-grid">
+                <!-- populated by JS -->
+            </div>
+
+            <div style="margin-top:0.5rem; text-align:right;">
+                <button class="reset-btn" id="reset-stats-btn">Reset Stats</button>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Achievements</h2>
+            <p id="ach-progress-text" style="margin-bottom:0.5rem; opacity:0.7; font-size:0.9rem;"></p>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" id="ach-progress-bar" style="width:0%"></div>
+            </div>
+            <div class="achievements-grid" id="achievements-grid">
+                <!-- populated by JS -->
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Today's Daily Challenge</h2>
+            <p>The Daily Challenge gives everyone the same seeded board for the day. Your best score today is shown below. Head to the <a href="index.html">game page</a>, select <strong>DAILY</strong> mode, and give it your best shot.</p>
+            <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); max-width: 400px;">
+                <div class="stat-card">
+                    <span class="stat-val" id="daily-score">—</span>
+                    <span class="stat-lbl">Best Today</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-val" id="daily-date">—</span>
+                    <span class="stat-lbl">Today's Date</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer" aria-label="Site footer">
+        <div class="footer-links">
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="contact.html">Contact</a>
+            <a href="about.html">About</a>
+            <a href="how-to-play.html">How to Play</a>
+            <a href="stats.html">My Stats</a>
+        </div>
+        <p class="footer-note">Slitheroo is a browser-based arcade experience built for quick, competitive fun.</p>
+    </footer>
+</div>
+
+<script>
+const STATS_KEY = 'slitherooStats';
+const ACHIEVEMENTS_KEY = 'slitherooAchievements';
+const STREAK_KEY = 'slitherooPlayStreak';
+const STREAK_DATE_KEY = 'slitherooLastPlayDate';
+const DAILY_SCORE_KEY = 'slitherooDailyScore';
+const NICKNAME_KEY = 'slitherooNickname';
+
+const ACHIEVEMENT_DEFS = [
+    { id: 'first_blood',   label: 'First Run',       desc: 'Complete your first game',          icon: '🎮' },
+    { id: 'hungry',        label: 'Hungry',          desc: 'Eat 50 food in one run',            icon: '🍎' },
+    { id: 'centurion',     label: 'Centurion',       desc: 'Score 100 points',                  icon: '💯' },
+    { id: 'high_roller',   label: 'High Roller',     desc: 'Score 500 points',                  icon: '🎰' },
+    { id: 'legend',        label: 'Legend',          desc: 'Score 1000 points',                 icon: '👑' },
+    { id: 'survivor',      label: 'Survivor',        desc: 'Reach level 5',                     icon: '🏆' },
+    { id: 'power_hungry',  label: 'Power Hungry',    desc: 'Collect 10 power-ups total',        icon: '⚡' },
+    { id: 'speed_demon',   label: 'Speed Demon',     desc: 'Reach level 8',                     icon: '💨' },
+    { id: 'ghost_rider',   label: 'Ghost Rider',     desc: 'Use Ghost power-up',                icon: '👻' },
+    { id: 'daily_devotee', label: 'Daily Devotee',   desc: 'Play 3 days in a row',              icon: '📅' },
+    { id: 'week_warrior',  label: 'Week Warrior',    desc: 'Play 7 days in a row',              icon: '🔥' },
+    { id: 'combo_king',    label: 'Combo King',      desc: 'Reach a x10 streak',                icon: '🔗' }
+];
+
+function loadJSON(key) { try { return JSON.parse(localStorage.getItem(key)) || {}; } catch { return {}; } }
+function loadArr(key)  { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
+function todayUtc() { return new Date().toISOString().slice(0, 10); }
+
+function renderStats() {
+    const stats = loadJSON(STATS_KEY);
+    const nickname = localStorage.getItem(NICKNAME_KEY) || '';
+    if (nickname) {
+        document.getElementById('welcome-line').textContent = `Welcome back, ${nickname}. Here's your performance summary.`;
+    }
+
+    // Streak
+    const streak = Number(localStorage.getItem(STREAK_KEY) || 0);
+    const lastDate = localStorage.getItem(STREAK_DATE_KEY) || '';
+    const today = todayUtc();
+    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+    const activeStreak = lastDate === today || lastDate === yesterday.toISOString().slice(0, 10);
+    const streakDisplay = document.getElementById('streak-display');
+    if (streak > 0 && activeStreak) {
+        streakDisplay.innerHTML = `<div class="streak-badge">🔥 ${streak}-day play streak — keep it going!</div>`;
+    }
+
+    const grid = document.getElementById('stats-grid');
+    const avgScore = stats.gamesPlayed ? Math.round((stats.totalScore || 0) / stats.gamesPlayed) : 0;
+    const items = [
+        { val: stats.gamesPlayed || 0,      lbl: 'Games Played'    },
+        { val: stats.bestScore || 0,         lbl: 'Best Score'      },
+        { val: avgScore,                     lbl: 'Avg Score'       },
+        { val: stats.bestLevel || 0,         lbl: 'Best Level'      },
+        { val: stats.totalFood || 0,         lbl: 'Food Eaten'      },
+        { val: stats.totalPowerups || 0,     lbl: 'Power-Ups Used'  }
+    ];
+    grid.innerHTML = items.map(i => `
+        <div class="stat-card">
+            <span class="stat-val">${i.val.toLocaleString()}</span>
+            <span class="stat-lbl">${i.lbl}</span>
+        </div>
+    `).join('');
+
+    // Daily
+    const dailyScore = localStorage.getItem(DAILY_SCORE_KEY) || '—';
+    document.getElementById('daily-score').textContent = dailyScore !== '—' ? Number(dailyScore).toLocaleString() : '—';
+    document.getElementById('daily-date').textContent = today;
+}
+
+function renderAchievements() {
+    const unlocked = loadArr(ACHIEVEMENTS_KEY);
+    const grid = document.getElementById('achievements-grid');
+    const total = ACHIEVEMENT_DEFS.length;
+    const count = unlocked.length;
+
+    document.getElementById('ach-progress-text').textContent = `${count} / ${total} unlocked`;
+    document.getElementById('ach-progress-bar').style.width = `${Math.round((count / total) * 100)}%`;
+
+    grid.innerHTML = ACHIEVEMENT_DEFS.map(def => {
+        const done = unlocked.includes(def.id);
+        return `
+            <div class="ach-card ${done ? 'unlocked' : ''}">
+                <span class="ach-icon">${def.icon}</span>
+                <div class="ach-info">
+                    <span class="ach-name">${def.label}</span>
+                    <span class="ach-desc">${def.desc}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+document.getElementById('reset-stats-btn').addEventListener('click', () => {
+    if (!confirm('Reset all stats and achievements? This cannot be undone.')) return;
+    localStorage.removeItem(STATS_KEY);
+    localStorage.removeItem(ACHIEVEMENTS_KEY);
+    localStorage.removeItem(STREAK_KEY);
+    localStorage.removeItem(STREAK_DATE_KEY);
+    localStorage.removeItem(DAILY_SCORE_KEY);
+    renderStats();
+    renderAchievements();
+});
+
+renderStats();
+renderAchievements();
+
+// Nav toggle
+const navToggle = document.querySelector('.nav-toggle');
+const navLinks = document.querySelector('.site-nav-links');
+if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => {
+        const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+        navToggle.setAttribute('aria-expanded', String(!expanded));
+        navLinks.classList.toggle('open');
+    });
+}
+</script>
+</body>
+</html>

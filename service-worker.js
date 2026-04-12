@@ -1,4 +1,4 @@
-const CACHE_NAME = 'slitheroo-v1.4.1';
+const CACHE_NAME = 'slitheroo-v2.0.0';
 const APP_SHELL = [
   './',
   './index.html',
@@ -12,6 +12,7 @@ const APP_SHELL = [
   './about.html',
   './how-to-play.html',
   './blog.html',
+  './stats.html',
   './assets/logo-full.png',
   './assets/favicon-16.png',
   './assets/favicon-32.png',
@@ -34,9 +35,7 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  if (url.hostname.includes('supabase.co')) {
-    return;
-  }
+  if (url.hostname.includes('supabase.co')) return;
 
   if (req.mode === 'navigate') {
     event.respondWith(

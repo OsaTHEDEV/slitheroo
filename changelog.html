@@ -4,233 +4,211 @@
     <meta charset="UTF-8">
     <meta name="google-adsense-account" content="ca-pub-9247801614753906">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slitheroo Changelog – Version History and Updates</title>
-    <meta name="description" content="Track every update to Slitheroo. Full version history including new features, improvements, and bug fixes across all releases.">
+    <title>Slitheroo Changelog — Version History &amp; Updates</title>
+    <meta name="description" content="Full version history for Slitheroo. See every feature, fix, and improvement since launch, from v1.0 through the latest release.">
+    <link rel="canonical" href="https://slitheroo.online/changelog.html">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Slitheroo Changelog — Version History">
+    <meta property="og:description" content="Every update to Slitheroo since launch. Track new features, bug fixes, and improvements across all versions.">
+    <meta property="og:url" content="https://slitheroo.online/changelog.html">
+    <meta property="og:site_name" content="Slitheroo">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Slitheroo Changelog",
+      "url": "https://slitheroo.online/changelog.html",
+      "description": "Complete version history for Slitheroo, a browser-based neon Snake game.",
+      "publisher": { "@type": "Organization", "name": "Slitheroo", "url": "https://slitheroo.online" }
+    }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .version-block {
-            margin-bottom: 0.5rem;
-        }
+        .version-block { margin-bottom: 0.5rem; }
         .version-tag {
             display: inline-block;
-            background: rgba(56, 189, 248, 0.15);
-            border: 1px solid rgba(56, 189, 248, 0.4);
-            color: var(--accent-color);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
             padding: 0.2rem 0.7rem;
             border-radius: 999px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
         }
-        .version-tag.latest {
-            background: rgba(0, 255, 136, 0.12);
-            border-color: rgba(0, 255, 136, 0.4);
-            color: var(--snake-color);
-        }
-        .change-type {
-            font-size: 0.72rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            opacity: 0.55;
-            margin: 0.9rem 0 0.3rem;
-        }
+        .version-tag.latest { background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid rgba(0,255,136,0.35); }
+        .version-tag.stable { background: rgba(56,189,248,0.12); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); }
+        .version-tag.legacy { background: rgba(148,163,184,0.1); color: rgba(148,163,184,0.7); border: 1px solid rgba(148,163,184,0.2); }
+        .changelog-list { margin: 0 0 0 1.1rem; display: grid; gap: 0.35rem; }
+        .changelog-list li { font-size: 0.93rem; line-height: 1.5; }
+        .tag-new  { color: #86efac; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-right: 0.3rem; letter-spacing: 0.5px; }
+        .tag-fix  { color: #fca5a5; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-right: 0.3rem; letter-spacing: 0.5px; }
+        .tag-imp  { color: #93c5fd; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-right: 0.3rem; letter-spacing: 0.5px; }
     </style>
 </head>
 <body class="page">
-    <div class="site-shell">
-        <nav class="site-nav" aria-label="Primary">
-            <a class="brand-link" href="index.html" aria-label="Slitheroo home">
-                <img src="assets/favicon-32.png" alt="" width="24" height="24" decoding="async" loading="eager">
-                <span>Slitheroo</span>
-            </a>
-            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-links">Menu</button>
-            <div class="site-nav-links" id="site-nav-links">
-                <a href="index.html">Home</a>
-                <a href="how-to-play.html">How to Play</a>
-                <a href="blog.html">Blog</a>
-                <a href="faq.html">FAQ</a>
-                <a href="about.html">About</a>
-                <a href="index.html#leaderboard">Leaderboard</a>
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="terms.html">Terms of Service</a>
-                <a href="contact.html">Contact</a>
-            </div>
-        </nav>
+<div class="site-shell">
+    <nav class="site-nav" aria-label="Primary">
+        <a class="brand-link" href="index.html" aria-label="Slitheroo home">
+            <img src="assets/favicon-32.png" alt="" width="24" height="24" decoding="async" loading="eager">
+            <span>Slitheroo</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-links">Menu</button>
+        <div class="site-nav-links" id="site-nav-links">
+            <a href="index.html">Home</a>
+            <a href="how-to-play.html">How to Play</a>
+            <a href="blog.html">Blog</a>
+            <a href="faq.html">FAQ</a>
+            <a href="stats.html">My Stats</a>
+            <a href="about.html">About</a>
+            <a href="index.html#leaderboard">Leaderboard</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
 
-        <main class="page-content">
+    <main class="page-content">
 
-            <section class="content-section">
-                <h1>Changelog</h1>
-                <p>Every update to Slitheroo is documented here. This page tracks new features, improvements, and bug fixes across all versions. The most recent release is listed first.</p>
-            </section>
+        <section class="content-section">
+            <h1>Changelog</h1>
+            <p>Every update to Slitheroo since launch. The game is actively maintained and improved based on player feedback and new ideas. Check back here to see what has changed in each version.</p>
+        </section>
 
-            <!-- v1.3.0 -->
-            <section class="content-section version-block">
-                <div class="version-tag latest">v1.3.0 — Current</div>
-                <p class="meta">Released March 2026</p>
+        <section class="content-section version-block">
+            <div class="version-tag latest">v2.0.0 — Latest</div>
+            <p class="meta">Released April 1, 2026</p>
+            <h2>The Big Feature Update</h2>
+            <p>Version 2.0 is the largest update to Slitheroo since launch, adding two new game modes, a full power-up system, food variety, achievements, a personal stats page, and major gameplay polish.</p>
+            <ul class="changelog-list">
+                <li><span class="tag-new">New</span> Timed mode — score as much as possible in 60 seconds</li>
+                <li><span class="tag-new">New</span> Daily Challenge mode — seeded board, same for everyone each day</li>
+                <li><span class="tag-new">New</span> Power-ups: Shield, Score Multiplier (2×), Slow Motion, Ghost</li>
+                <li><span class="tag-new">New</span> Three food types: Normal (10pts), Bonus (25pts), Mega (50pts)</li>
+                <li><span class="tag-new">New</span> 12 achievements with localStorage persistence</li>
+                <li><span class="tag-new">New</span> Personal stats page (stats.html) tracking games, scores, levels, food, power-ups</li>
+                <li><span class="tag-new">New</span> Day streak tracker with on-screen display</li>
+                <li><span class="tag-new">New</span> Screen shake on death</li>
+                <li><span class="tag-new">New</span> Particle burst effects on food pickup</li>
+                <li><span class="tag-new">New</span> Web Audio API sound effects — eat, level up, die, power-up, combo (no external files)</li>
+                <li><span class="tag-new">New</span> Animated pulsing food with inner highlight</li>
+                <li><span class="tag-new">New</span> Combo streak popups at x3 and above</li>
+                <li><span class="tag-new">New</span> Share score as branded PNG image (canvas export)</li>
+                <li><span class="tag-new">New</span> Challenge link — copies a URL showing your score for a rival to beat</li>
+                <li><span class="tag-new">New</span> Sound toggle button in game header (M key shortcut)</li>
+                <li><span class="tag-new">New</span> Power-up HUD bar displayed on canvas during active effects</li>
+                <li><span class="tag-new">New</span> Timed mode countdown HUD on canvas</li>
+                <li><span class="tag-imp">Improved</span> Seeded RNG system for deterministic Daily Challenge boards</li>
+                <li><span class="tag-imp">Improved</span> Shield power-up absorbs wall and obstacle hits before applying normal death logic</li>
+                <li><span class="tag-imp">Improved</span> Ghost power-up bypasses self-collision checks</li>
+                <li><span class="tag-imp">Improved</span> Slow Motion multiplies the game loop accumulator delay rather than changing speed constants</li>
+                <li><span class="tag-imp">Improved</span> Service worker bumped to v2.0.0, stats.html added to cache</li>
+                <li><span class="tag-imp">Improved</span> Navigation updated across all pages to include Stats, Blog, FAQ links</li>
+            </ul>
+        </section>
 
-                <p class="change-type">New Features</p>
-                <ul class="content-list">
-                    <li>Added daily continue feature — one continue per day in Ranked mode, revives snake at last safe position with a grace period.</li>
-                    <li>Introduced Hard difficulty setting — faster level progression and more aggressive obstacle density.</li>
-                    <li>Added arena expansion mechanic — board grows from 20×20 to 30×30 when snake occupancy exceeds 80 percent, with Ultimate Victory condition at 95 percent occupancy post-expansion.</li>
-                    <li>New Pulse snake skin with intensified glow effect.</li>
-                    <li>Added pre-game stats panel showing personal best score and current daily rank before starting a run.</li>
-                    <li>New high score badge now appears on the game over screen when you beat your personal best.</li>
-                </ul>
+        <section class="content-section version-block">
+            <div class="version-tag stable">v1.3.0</div>
+            <p class="meta">Released February 2026</p>
+            <h2>Rewarded Ads &amp; Continue Feature</h2>
+            <ul class="changelog-list">
+                <li><span class="tag-new">New</span> Rewarded ad integration via Google Publisher Tag (GPT)</li>
+                <li><span class="tag-new">New</span> Continue-after-death feature — one continue per day via rewarded ad</li>
+                <li><span class="tag-new">New</span> Consent banner for ad personalization (GDPR-aware)</li>
+                <li><span class="tag-new">New</span> Non-personalized ad default with opt-in for personalized ads</li>
+                <li><span class="tag-imp">Improved</span> SLITHEROO_CONFIG object for centralized ad and backend configuration</li>
+                <li><span class="tag-imp">Improved</span> Grace steps on revival to prevent immediate re-death after continue</li>
+                <li><span class="tag-imp">Improved</span> Service worker updated to v1.4.1</li>
+            </ul>
+        </section>
 
-                <p class="change-type">Improvements</p>
-                <ul class="content-list">
-                    <li>Obstacle movement begins at level 10 instead of level 8, giving players more time to adapt before obstacles become mobile.</li>
-                    <li>Improved swipe detection on mobile — reduced false positives from accidental touches and increased responsiveness on short swipes.</li>
-                    <li>Score counter animation updated to use a smoother easing curve.</li>
-                    <li>Leaderboard now highlights your own nickname in green when it appears in the top 10 daily or top 50 all-time.</li>
-                    <li>Game over screen layout reorganized for better readability on small screens.</li>
-                    <li>Service worker updated to cache version 1.3 assets, clearing previous cache on activate.</li>
-                </ul>
+        <section class="content-section version-block">
+            <div class="version-tag stable">v1.2.0</div>
+            <p class="meta">Released January 2026</p>
+            <h2>Customization &amp; Zen Mode</h2>
+            <ul class="changelog-list">
+                <li><span class="tag-new">New</span> Zen mode — walls wrap around instead of killing the snake</li>
+                <li><span class="tag-new">New</span> Customization screen with four snake skins: Neon, Retro, Striped, Pulse</li>
+                <li><span class="tag-new">New</span> Four visual themes: Deep Sea, Cyberpunk, Matrix, Sunset</li>
+                <li><span class="tag-new">New</span> Zen mode toggle for showing obstacles</li>
+                <li><span class="tag-new">New</span> All-time leaderboard (Top 50)</li>
+                <li><span class="tag-imp">Improved</span> Dynamic hue-rotate CSS variable for level-based visual theming</li>
+                <li><span class="tag-imp">Improved</span> Score bump animation on food pickup</li>
+                <li><span class="tag-imp">Improved</span> Leaderboard tab switching between daily and all-time views</li>
+            </ul>
+        </section>
 
-                <p class="change-type">Bug Fixes</p>
-                <ul class="content-list">
-                    <li>Fixed an issue where the snake could occasionally pass through an obstacle tile on the frame the obstacle moved into its position.</li>
-                    <li>Fixed pause screen not appearing correctly on iOS Safari when triggered from the keyboard shortcut.</li>
-                    <li>Fixed score submission retry button remaining visible after a successful retry.</li>
-                    <li>Fixed nav toggle button not closing the menu when clicked a second time on certain mobile browsers.</li>
-                </ul>
-            </section>
+        <section class="content-section version-block">
+            <div class="version-tag legacy">v1.1.0</div>
+            <p class="meta">Released December 2025</p>
+            <h2>Leaderboards &amp; Nicknames</h2>
+            <ul class="changelog-list">
+                <li><span class="tag-new">New</span> Daily leaderboard via Supabase backend</li>
+                <li><span class="tag-new">New</span> Nickname system with validation (3–16 chars, alphanumeric)</li>
+                <li><span class="tag-new">New</span> Score submission after each ranked run</li>
+                <li><span class="tag-new">New</span> Current player highlighting in leaderboard list</li>
+                <li><span class="tag-new">New</span> Retry submit button on network failure</li>
+                <li><span class="tag-new">New</span> Pregame stats showing best score and daily rank</li>
+                <li><span class="tag-imp">Improved</span> IP hash stored server-side for basic spam protection</li>
+                <li><span class="tag-imp">Improved</span> RLS policies on Supabase scores table</li>
+            </ul>
+        </section>
 
-            <!-- v1.2.0 -->
-            <section class="content-section version-block">
-                <div class="version-tag">v1.2.0</div>
-                <p class="meta">Released February 2026</p>
+        <section class="content-section version-block">
+            <div class="version-tag legacy">v1.0.0</div>
+            <p class="meta">Released November 2025</p>
+            <h2>Initial Launch</h2>
+            <ul class="changelog-list">
+                <li><span class="tag-new">New</span> Core Snake gameplay on HTML5 Canvas</li>
+                <li><span class="tag-new">New</span> Ranked mode with wall collision and obstacle scaling by level</li>
+                <li><span class="tag-new">New</span> Level progression with speed increase every 50 points</li>
+                <li><span class="tag-new">New</span> Arena expansion when snake fills 80% of the board</li>
+                <li><span class="tag-new">New</span> Mobile swipe controls with pointer event handling</li>
+                <li><span class="tag-new">New</span> Splash screen and animated overlays</li>
+                <li><span class="tag-new">New</span> Pause screen with run statistics</li>
+                <li><span class="tag-new">New</span> Game over screen with summary grid</li>
+                <li><span class="tag-new">New</span> High score persistence via localStorage</li>
+                <li><span class="tag-new">New</span> Service worker for PWA / offline support</li>
+                <li><span class="tag-new">New</span> Web app manifest for installability</li>
+                <li><span class="tag-new">New</span> Privacy policy, terms of service, contact, and about pages</li>
+            </ul>
+        </section>
 
-                <p class="change-type">New Features</p>
-                <ul class="content-list">
-                    <li>Global leaderboard system launched — daily top 10 and all-time top 50, powered by Supabase.</li>
-                    <li>Nickname system introduced — players can set a 3–16 character nickname that is saved locally and used for leaderboard submissions.</li>
-                    <li>Score submission with retry on failure — scores are automatically submitted after each Ranked run with a retry button if the initial submission fails.</li>
-                    <li>Zen mode added — wrap-around wall behavior, obstacles optional, no leaderboard submission.</li>
-                    <li>Ranked and Zen mode selector added to main menu.</li>
-                    <li>Daily and all-time leaderboard tabs on main menu with live data.</li>
-                </ul>
+        <section class="content-section">
+            <h2>Upcoming</h2>
+            <p>Features currently under consideration for future updates include expanded theme options, difficulty-specific leaderboard tracks, and additional achievement categories. The game is actively developed and improved. Check back here after each update or follow along via the <a href="blog.html">blog</a> for announcements.</p>
+        </section>
 
-                <p class="change-type">Improvements</p>
-                <ul class="content-list">
-                    <li>Completely rebuilt main menu layout with card-based design and sticky navigation bar.</li>
-                    <li>Added splash screen transitions between menu and game states.</li>
-                    <li>Navigation bar now sticks to the top of the viewport when scrolling the main menu.</li>
-                    <li>Footer expanded with links to all site pages.</li>
-                    <li>Added Privacy Policy and Terms of Service pages.</li>
-                    <li>Meta tags and Open Graph data added to all pages for better link previews.</li>
-                </ul>
+    </main>
 
-                <p class="change-type">Bug Fixes</p>
-                <ul class="content-list">
-                    <li>Fixed food occasionally spawning in positions adjacent to three or more obstacles with no safe approach path.</li>
-                    <li>Fixed theme not resetting correctly when returning to the main menu after a run.</li>
-                    <li>Fixed canvas not resizing properly after device orientation change on Android.</li>
-                </ul>
-            </section>
-
-            <!-- v1.1.0 -->
-            <section class="content-section version-block">
-                <div class="version-tag">v1.1.0</div>
-                <p class="meta">Released January 2026</p>
-
-                <p class="change-type">New Features</p>
-                <ul class="content-list">
-                    <li>Customization screen added — four snake skins (Neon, Retro, Striped, Pulse) and four color themes (Deep Sea, Cyberpunk, Matrix, Sunset).</li>
-                    <li>Dynamic theme rotation on level up — each new level shifts the visual theme automatically.</li>
-                    <li>Level hue rotation applied to game container using CSS filter for continuous visual progression between named themes.</li>
-                    <li>Streak counter added — tracks consecutive food pickups within the combo window.</li>
-                    <li>Level up notification overlay added — animated text appears in the center of the canvas on level transitions.</li>
-                    <li>Pause screen with live game stats — shows score, level, snake length, and board occupancy while paused.</li>
-                </ul>
-
-                <p class="change-type">Improvements</p>
-                <ul class="content-list">
-                    <li>Game speed scaling adjusted — speed now increases more gradually at low levels and more sharply at high levels.</li>
-                    <li>Obstacle generation improved — obstacles now maintain a minimum distance from the snake's head at spawn time.</li>
-                    <li>Canvas rendering performance improved by caching CSS variable values rather than calling getComputedStyle every frame.</li>
-                    <li>PWA manifest updated with correct icon sizes and maskable icon designation.</li>
-                    <li>Service worker updated with network-first strategy for navigation requests.</li>
-                </ul>
-
-                <p class="change-type">Bug Fixes</p>
-                <ul class="content-list">
-                    <li>Fixed snake glow persisting on canvas after the snake died due to shadowBlur not being reset.</li>
-                    <li>Fixed direction queue allowing a 180-degree reversal if two direction changes were queued rapidly.</li>
-                    <li>Fixed high score not updating in the header during a run when a new personal best was set mid-game.</li>
-                    <li>Fixed touch controls conflicting with page scroll on mobile when the game was not in focus.</li>
-                </ul>
-            </section>
-
-            <!-- v1.0.0 -->
-            <section class="content-section version-block">
-                <div class="version-tag">v1.0.0</div>
-                <p class="meta">Released December 2025</p>
-
-                <p class="change-type">Initial Release</p>
-                <ul class="content-list">
-                    <li>Core Snake gameplay on a 20×20 grid with canvas-based rendering.</li>
-                    <li>Arrow key and WASD keyboard controls on desktop.</li>
-                    <li>Swipe gesture controls on mobile using Pointer Events API.</li>
-                    <li>Score tracking with local storage persistence for personal best.</li>
-                    <li>Level system with speed increase every 50 points.</li>
-                    <li>Obstacle generation starting at level 2, with one additional obstacle per level.</li>
-                    <li>Neon visual style with glow effects on snake and food.</li>
-                    <li>Game over screen with run summary — score, level, snake length, and board occupancy.</li>
-                    <li>Fully responsive canvas that scales to the available viewport size.</li>
-                    <li>Progressive Web App setup with service worker and manifest for home screen installation.</li>
-                    <li>How to Play, About, Privacy Policy, Terms of Service, and Contact pages.</li>
-                </ul>
-            </section>
-
-            <section class="content-section">
-                <h2>Upcoming</h2>
-                <p>Features currently in development or planned for future releases:</p>
-                <ul class="content-list">
-                    <li>Weekly challenge modes with rotating rule sets</li>
-                    <li>Private leaderboards for friend groups</li>
-                    <li>Run replay system for reviewing your best games</li>
-                    <li>Additional snake skins and board themes</li>
-                    <li>Accessibility improvements including motion reduction support</li>
-                    <li>Performance optimizations for very low-end devices</li>
-                </ul>
-                <p>Have a feature request? Submit it through the <a href="contact.html">contact page</a>.</p>
-            </section>
-
-        </main>
-
-        <footer class="site-footer" aria-label="Site footer">
-            <div class="footer-links">
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="terms.html">Terms of Service</a>
-                <a href="contact.html">Contact</a>
-                <a href="about.html">About</a>
-                <a href="how-to-play.html">How to Play</a>
-                <a href="blog.html">Blog</a>
-                <a href="faq.html">FAQ</a>
-                <a href="changelog.html">Changelog</a>
-            </div>
-            <p class="footer-note">Slitheroo is a browser-based arcade experience built for quick, competitive fun.</p>
-        </footer>
-    </div>
-    <script>
-        const navToggle = document.querySelector('.nav-toggle');
-        const navLinks = document.querySelector('.site-nav-links');
-        if (navToggle && navLinks) {
-            navToggle.addEventListener('click', () => {
-                const expanded = navToggle.getAttribute('aria-expanded') === 'true';
-                navToggle.setAttribute('aria-expanded', String(!expanded));
-                navLinks.classList.toggle('open');
-            });
-        }
-    </script>
+    <footer class="site-footer" aria-label="Site footer">
+        <div class="footer-links">
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="contact.html">Contact</a>
+            <a href="about.html">About</a>
+            <a href="how-to-play.html">How to Play</a>
+            <a href="blog.html">Blog</a>
+            <a href="faq.html">FAQ</a>
+        </div>
+        <p class="footer-note">Slitheroo is a browser-based arcade experience built for quick, competitive fun.</p>
+    </footer>
+</div>
+<script>
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.site-nav-links');
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+            const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+            navToggle.setAttribute('aria-expanded', String(!expanded));
+            navLinks.classList.toggle('open');
+        });
+    }
+</script>
 </body>
 </html>
