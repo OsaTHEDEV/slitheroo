@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slitheroo Leaderboard Rules and Fair Play</title>
+    <meta name="description" content="Learn how Slitheroo daily and all-time leaderboards work, what counts as a valid score, and how fair-play checks are handled.">
+    <link rel="canonical" href="https://slitheroo.online/leaderboard-rules.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="page">
+    <div class="site-shell">
+        <nav class="site-nav" aria-label="Primary">
+            <a class="brand-link" href="index.html" aria-label="Slitheroo home">
+                <img src="assets/favicon-32.png" alt="" width="24" height="24" decoding="async" loading="eager">
+                <span>Slitheroo</span>
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-links">Menu</button>
+            <div class="site-nav-links" id="site-nav-links">
+                <a href="index.html">Home</a>
+                <a href="how-to-play.html">How to Play</a>
+                <a href="leaderboard-rules.html">Leaderboard Rules</a>
+                <a href="faq.html">Help</a>
+                <a href="blog.html">Devlog</a>
+                <a href="stats.html">My Stats</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </nav>
+
+        <main class="page-content">
+            <section class="content-section">
+                <h1>Leaderboard Rules and Fair Play</h1>
+                <p>This page explains how Slitheroo handles live scoreboards, which runs count, and what can cause a score to be ignored. It exists so players and reviewers can see the rules in one place instead of guessing from the UI alone.</p>
+            </section>
+
+            <section class="content-section">
+                <h2>What Leaderboards Exist</h2>
+                <ul class="content-list">
+                    <li><strong>Daily Top 10:</strong> resets each UTC day and highlights the best runs for the current date.</li>
+                    <li><strong>All-Time Top 50:</strong> keeps the strongest historical scores across the project.</li>
+                </ul>
+            </section>
+
+            <section class="content-section">
+                <h2>Which Runs Count</h2>
+                <p>Ranked runs are eligible for leaderboard submission. Daily Challenge uses a seeded board and is intended as a skill comparison mode, but the exact storage and display rules can change as the mode evolves. Zen is for practice and does not compete in the same way as Ranked. Timed mode is a score-attack variant and may be handled separately from classic ranked progression depending on the live rule set.</p>
+            </section>
+
+            <section class="content-section">
+                <h2>Nickname Rules</h2>
+                <p>Your chosen nickname is the public label attached to your score. Use something stable so your progress stays recognizable over time. Nicknames that are abusive, deceptive, spammy, or obviously designed to interfere with the leaderboard may be removed or blocked.</p>
+            </section>
+
+            <section class="content-section">
+                <h2>How Duplicate Runs Are Handled</h2>
+                <p>The leaderboard system is designed to prefer legitimate best runs instead of raw submission volume. Practical anti-spam controls are used so that one player cannot flood the board with repeated low-value entries or easy duplicates.</p>
+                <p>From a player perspective, the important rule is simple: use one nickname consistently and focus on real runs. If a score does not appear, it may have failed due to connection issues, validation, or backend protection rules.</p>
+            </section>
+
+            <section class="content-section">
+                <h2>What Can Invalidate A Score</h2>
+                <ul class="content-list">
+                    <li>Network failure during submission.</li>
+                    <li>Malformed or suspicious payloads.</li>
+                    <li>Duplicate or abusive activity detected by the backend.</li>
+                    <li>Nickname violations.</li>
+                    <li>Future rule changes that narrow which modes count toward public rankings.</li>
+                </ul>
+            </section>
+
+            <section class="content-section">
+                <h2>What To Do If A Score Looks Wrong</h2>
+                <p>If your score is missing or the board looks inconsistent, send the nickname used, the approximate time of the run, the mode you played, and the score you expected to see to <a href="mailto:wsuperheros@gmail.com">wsuperheros@gmail.com</a>. That makes it much easier to trace whether the problem was local, network-related, or backend-related.</p>
+            </section>
+        </main>
+
+        <footer class="site-footer" aria-label="Site footer">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="contact.html">Contact</a>
+                <a href="about.html">About</a>
+                <a href="how-to-play.html">How to Play</a>
+                <a href="leaderboard-rules.html">Leaderboard Rules</a>
+                <a href="blog.html">Devlog</a>
+                <a href="faq.html">Help</a>
+            </div>
+            <p class="footer-note">Published by slitheroo.online - classic games reborn.</p>
+        </footer>
+    </div>
+
+    <script>
+        const navToggle = document.querySelector('.nav-toggle');
+        const navLinks = document.querySelector('.site-nav-links');
+        if (navToggle && navLinks) {
+            navToggle.addEventListener('click', () => {
+                const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+                navToggle.setAttribute('aria-expanded', String(!expanded));
+                navLinks.classList.toggle('open');
+            });
+        }
+    </script>
+</body>
+</html>

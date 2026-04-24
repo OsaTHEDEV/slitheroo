@@ -1,29 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NKDKP76JY1"></script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9247801614753906"
-     crossorigin="anonymous"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = window.gtag || function(){ dataLayer.push(arguments); };
-  gtag('js', new Date());
-  gtag('consent', 'default', {
-    ad_storage: 'granted',
-    ad_user_data: 'denied',
-    ad_personalization: 'denied',
-    analytics_storage: 'granted',
-    wait_for_update: 500
-  });
-  gtag('config', 'G-NKDKP76JY1');
-</script>
-<script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
     <meta charset="UTF-8">
     <meta name="google-adsense-account" content="ca-pub-9247801614753906">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Slitheroo - Neon Snake Game with Daily Leaderboards</title>
+    <title>Slitheroo - Browser Snake Game with Daily Competition</title>
+    <meta name="description" content="Play Slitheroo online, a browser Snake game with ranked runs, daily challenge boards, local stats, and live leaderboards.">
+    <link rel="canonical" href="https://slitheroo.online/">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
@@ -34,9 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <meta name="description" content="Play Slitheroo online — a competitive neon Snake game with daily and all-time leaderboards. Instant browser play, no download.">
     <style>
-        /* Inline additions for new features */
         .combo-popup {
             position: absolute;
             top: 12%;
@@ -113,7 +94,8 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.85rem;
+            font-weight: 700;
             transition: all 0.2s ease;
             line-height: 1;
         }
@@ -141,7 +123,7 @@
                     <h1>SLITHEROO</h1>
                 </div>
                 <div class="header-controls">
-                    <button id="sound-toggle-btn" title="Toggle Sound (M)" aria-label="Toggle sound">🔊</button>
+                    <button id="sound-toggle-btn" title="Toggle Sound (M)" aria-label="Toggle sound">S</button>
                     <button id="pause-btn" title="Pause Game (P)" aria-label="Pause game">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -206,11 +188,11 @@
                 <div class="site-nav-links" id="site-nav-links">
                     <a href="index.html">Home</a>
                     <a href="how-to-play.html">How to Play</a>
+                    <a href="leaderboard-rules.html">Leaderboard Rules</a>
+                    <a href="faq.html">Help</a>
+                    <a href="blog.html">Devlog</a>
                     <a href="stats.html">My Stats</a>
                     <a href="about.html">About</a>
-                    <a href="index.html#leaderboard">Leaderboard</a>
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
                     <a href="contact.html">Contact</a>
                 </div>
             </nav>
@@ -237,7 +219,6 @@
                     </div>
                 </div>
 
-                <!-- Mode selection — now 4 modes -->
                 <div class="mode-selection">
                     <button class="mode-btn active" data-mode="RANKED">RANKED</button>
                     <button class="mode-btn" data-mode="ZEN">ZEN</button>
@@ -270,42 +251,40 @@
 
             <main class="page-content">
                 <section class="content-section" id="about">
-                    <h2>About the Game</h2>
-                    <p>Slitheroo is a modern, neon-flavored take on the classic Snake game, built for quick sessions and real competition. You guide a glowing snake across a tight grid, grabbing food to grow longer while trying to avoid walls and your own tail. Each bite raises the pressure as the space shrinks and your path options narrow. The loop is simple, but the tension builds fast, which is exactly why one more run always feels possible.</p>
-                    <p>This version is designed to launch instantly in your browser with no downloads or installs. Daily and all-time leaderboards keep the rivalry alive, so every game becomes a chance to beat your personal best or chase the global top spots.</p>
+                    <h2>What Slitheroo Is</h2>
+                    <p>Slitheroo is a maintained browser Snake game published by <strong>slitheroo.online</strong>. The live experience revolves around quick runs, readable controls, and a small set of features that actually change how you play: ranked scoring, a seeded daily board, local stats, and a live leaderboard.</p>
+                    <p>The site is intentionally focused on one game. Instead of spreading across generic arcade pages, the supporting content here is meant to explain this specific project: how the modes work, how scores are handled, what changed between versions, and how to get help if something breaks.</p>
                 </section>
 
                 <section class="content-section" id="how-to-play">
-                    <h2>How to Play</h2>
+                    <h2>How A Run Works</h2>
                     <ul class="content-list">
-                        <li>Use arrow keys on desktop or swipe on mobile to change direction.</li>
-                        <li>Eat food to grow longer and increase your score.</li>
-                        <li>Avoid crashing into walls or your own body.</li>
-                        <li>Grab glowing power-ups for shields, speed boosts, and more.</li>
-                        <li>Push for the highest score and climb the leaderboard.</li>
+                        <li><strong>Desktop or mobile:</strong> use arrow keys or swipe controls to steer the snake.</li>
+                        <li><strong>Core loop:</strong> eat food, grow longer, stay alive, and keep your route clean.</li>
+                        <li><strong>Ranked mode:</strong> classic pressure with deadly walls and leaderboard submission.</li>
+                        <li><strong>Daily mode:</strong> same seeded board for everyone, which turns each day into a fair comparison.</li>
+                        <li><strong>Support pages:</strong> the full guide, help page, and leaderboard rules explain the details behind the UI.</li>
                     </ul>
-                    <p class="inline-link">Want deeper tips? Visit the <a href="how-to-play.html">full How to Play guide</a>.</p>
+                    <p class="inline-link">Need the full breakdown? Read the <a href="how-to-play.html">complete How to Play guide</a>.</p>
                 </section>
 
                 <section class="content-section" id="features">
-                    <h2>Game Features</h2>
+                    <h2>Why This Version Feels Different</h2>
                     <ul class="content-list">
-                        <li>4 game modes: Ranked, Zen, Timed &amp; Daily Challenge</li>
-                        <li>Power-ups: Shield, 2× Score Multiplier, Slow Motion, Ghost</li>
-                        <li>3 food types with different point values</li>
-                        <li>Combo streaks with visual &amp; audio feedback</li>
-                        <li>12 achievements to unlock</li>
-                        <li>Personal stats page tracking your history</li>
-                        <li>Screen shake, particles &amp; Web Audio sound effects</li>
-                        <li>Share your score as an image or send a challenge link</li>
-                        <li>Daily play streak tracker</li>
+                        <li>Four modes with different pacing: Ranked, Zen, Timed, and Daily.</li>
+                        <li>Live daily and all-time boards backed by Supabase.</li>
+                        <li>Local stats and achievements that persist in your browser.</li>
+                        <li>Power-ups and food types that reward route planning instead of random rushing.</li>
+                        <li>PWA support so repeat visits are quick and mobile friendly.</li>
+                        <li>Public documentation for help, changelog, privacy, and fair-play rules.</li>
                     </ul>
-                    <p class="inline-link">Check your progress on the <a href="stats.html">My Stats page</a>.</p>
+                    <p class="inline-link">If you want the rule details behind the scoreboards, visit <a href="leaderboard-rules.html">Leaderboard Rules</a>.</p>
                 </section>
 
                 <section class="content-section" id="leaderboard">
-                    <h2>Leaderboard Competition</h2>
-                    <p>Every run in Slitheroo can be recorded on the global leaderboard, where daily and all-time rankings reset the race. Use a consistent nickname, track your climb, and challenge friends to beat your best score. Daily rankings reward sharp focus, while the all-time board honors the most skilled players over long streaks.</p>
+                    <h2>Publisher And Support</h2>
+                    <p>Slitheroo is published by <strong>slitheroo.online</strong> under the line <strong>classic games reborn</strong>. Support, policy, and business questions go to <a href="mailto:wsuperheros@gmail.com">wsuperheros@gmail.com</a>. The goal is to keep the game itself and the surrounding pages in sync, so if you see outdated copy or a broken flow, report it.</p>
+                    <p>For product notes and update context, read the <a href="blog.html">devlog</a> and <a href="changelog.html">changelog</a>. For controls, offline mode, or saved stats questions, start with the <a href="faq.html">help page</a>.</p>
                 </section>
             </main>
 
@@ -316,9 +295,11 @@
                     <a href="contact.html">Contact</a>
                     <a href="about.html">About</a>
                     <a href="how-to-play.html">How to Play</a>
-                    <a href="stats.html">My Stats</a>
+                    <a href="leaderboard-rules.html">Leaderboard Rules</a>
+                    <a href="blog.html">Devlog</a>
+                    <a href="faq.html">Help</a>
                 </div>
-                <p class="footer-note">Slitheroo is a browser-based arcade experience built for quick, competitive fun.</p>
+                <p class="footer-note">Published by slitheroo.online - classic games reborn.</p>
             </footer>
         </div>
     </div>
@@ -393,10 +374,7 @@
     <div id="game-over-screen" class="overlay hidden">
         <div class="menu-card">
             <h2 class="danger-text">GAME OVER</h2>
-
-            <!-- Achievement unlocks this run -->
             <div id="achievement-badges"></div>
-
             <div class="summary-grid">
                 <div class="summary-item">
                     <span class="label">Score</span>
@@ -425,8 +403,6 @@
             </div>
 
             <div id="new-high-score-badge" class="new-high-score-badge is-hidden">New High Score!</div>
-
-            <!-- Share buttons (rendered by JS) -->
             <div id="share-btn-container"></div>
 
             <div class="menu-actions">
@@ -442,18 +418,12 @@
         window.SLITHEROO_CONFIG = window.SLITHEROO_CONFIG || {
             SUPABASE_URL: 'https://yifxtldhqunzievavlnw.supabase.co',
             SUPABASE_ANON_KEY: 'sb_publishable_FPywpmUdsHsYuG0394VuoA_oJ4eLjOJ',
-            ADS_ENABLED: false,
-            AD_STACK: 'mock',
-            ADMGR_NETWORK_CODE: '',
-            ADMGR_REWARDED_AD_UNIT_PATH: '/0000000/slitheroo_rewarded',
-            AD_REQUEST_TIMEOUT_MS: 8000
+            ADS_ENABLED: false
         };
     </script>
-    <script src="ads/rewarded-ad.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
     <script>
-        // Nav toggles (multiple instances on page)
         document.querySelectorAll('.nav-toggle').forEach(btn => {
             btn.addEventListener('click', () => {
                 const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -463,5 +433,4 @@
         });
     </script>
 </body>
-
 </html>

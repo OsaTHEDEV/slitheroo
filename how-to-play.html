@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="google-adsense-account" content="ca-pub-9247801614753906">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How to Play Slitheroo – Complete Guide, Controls & Strategy</title>
-    <meta name="description" content="Master Slitheroo with our complete guide. Learn controls, scoring, Ranked vs Zen modes, difficulty settings, and advanced strategies to dominate the leaderboard.">
+    <title>How to Play Slitheroo - Controls, Modes, Scoring, and Strategy</title>
+    <meta name="description" content="Learn how Slitheroo works, from controls and modes to scoring, power-ups, leaderboard play, and practical strategy.">
+    <link rel="canonical" href="https://slitheroo.online/how-to-play.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
@@ -22,123 +22,68 @@
             <div class="site-nav-links" id="site-nav-links">
                 <a href="index.html">Home</a>
                 <a href="how-to-play.html">How to Play</a>
-                <a href="blog.html">Blog</a>
-                <a href="faq.html">FAQ</a>
+                <a href="leaderboard-rules.html">Leaderboard Rules</a>
+                <a href="faq.html">Help</a>
+                <a href="blog.html">Devlog</a>
+                <a href="stats.html">My Stats</a>
                 <a href="about.html">About</a>
-                <a href="index.html#leaderboard">Leaderboard</a>
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="terms.html">Terms of Service</a>
                 <a href="contact.html">Contact</a>
             </div>
         </nav>
 
         <main class="page-content">
-
             <section class="content-section">
                 <h1>How to Play Slitheroo</h1>
-                <p>Slitheroo is a modern, competitive take on the classic Snake formula. Your glowing snake moves continuously in one direction — your job is to steer it toward food, grow as long as possible, and avoid anything that ends your run. It sounds simple, but as your snake grows longer and the board fills up, every decision carries more weight. This guide covers everything from basic controls to advanced strategies that will help you climb the leaderboard.</p>
+                <p>This guide explains the actual game loop behind Slitheroo as it is shipped on slitheroo.online. It is written for players who want to understand the live modes, not just the basic Snake idea.</p>
             </section>
 
             <section class="content-section">
                 <h2>Controls</h2>
-                <p>Slitheroo is designed to work seamlessly on both desktop and mobile devices. Here is how to control your snake on each platform:</p>
                 <ul class="content-list">
-                    <li><strong>Desktop – Arrow Keys:</strong> Press the Up, Down, Left, or Right arrow keys to change your snake's direction.</li>
-                    <li><strong>Desktop – WASD:</strong> Alternatively, use W (up), A (left), S (down), and D (right) for a classic gaming layout.</li>
-                    <li><strong>Desktop – Pause:</strong> Press P or Escape to pause the game at any time.</li>
-                    <li><strong>Mobile – Swipe:</strong> Swipe in the direction you want your snake to turn. The game reads swipe gestures across the entire canvas area.</li>
-                    <li><strong>Mobile – Tap to focus:</strong> If the game is not responding to swipes, tap the canvas once to bring it into focus.</li>
-                    <li><strong>Important:</strong> You cannot reverse direction — your snake cannot turn 180 degrees directly. Plan your turns in advance.</li>
+                    <li><strong>Desktop:</strong> arrow keys or WASD change direction.</li>
+                    <li><strong>Pause:</strong> press <strong>P</strong> or <strong>Escape</strong>.</li>
+                    <li><strong>Sound:</strong> press <strong>M</strong> or tap the sound button.</li>
+                    <li><strong>Mobile:</strong> swipe in the direction you want the snake to move.</li>
+                    <li><strong>Important:</strong> the snake cannot reverse directly into itself, so route planning matters more than twitch input.</li>
                 </ul>
             </section>
 
             <section class="content-section">
-                <h2>Game Modes</h2>
-                <p>Slitheroo offers two distinct game modes, each designed for a different kind of player experience. You can switch between them freely on the main menu before starting a run.</p>
-
-                <h3 style="margin: 1rem 0 0.5rem; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-color);">Ranked Mode</h3>
-                <p>Ranked is the classic, high-stakes experience. Walls are solid boundaries — hitting any edge of the board ends your run immediately. Obstacles appear as you level up, and your score is eligible for submission to the daily and all-time leaderboards. If you want to compete and climb the rankings, Ranked is your mode.</p>
-
-                <h3 style="margin: 1rem 0 0.5rem; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-color);">Zen Mode</h3>
-                <p>Zen removes the wall penalty — your snake wraps around to the opposite edge instead of dying when it hits a wall. This creates a more relaxed, flowing style of play where you can focus on building long chains and experimenting with routes. You can also toggle obstacles on or off in Zen mode via the Customization screen. Zen scores are not submitted to the competitive leaderboard, making it ideal for practice or casual sessions.</p>
+                <h2>Modes</h2>
+                <p><strong>Ranked</strong> is the main competitive mode. Walls are deadly and successful runs can appear on the live leaderboard. <strong>Zen</strong> wraps the board edges and is best for practice and route experiments. <strong>Timed</strong> pushes short aggressive runs where you chase points quickly. <strong>Daily</strong> uses the same seeded board for all players that day, which makes it the fairest direct comparison mode on the site.</p>
             </section>
 
             <section class="content-section">
-                <h2>Difficulty Settings</h2>
-                <p>Both Ranked and Zen modes include two difficulty options that affect how quickly levels progress and how fast the game speeds up.</p>
+                <h2>Scoring And Pressure</h2>
+                <p>The basic rule is still simple: collect food, grow longer, and avoid collisions. What changes over a long run is the amount of board you control and the number of safe exits you still have. High scores in Slitheroo usually come from preserving space, not from chasing every pickup the instant it appears.</p>
+                <p>As the level rises, pace and board pressure increase. That is why the same route that feels easy at the start can become fatal later if it leaves no recovery lane.</p>
+            </section>
+
+            <section class="content-section">
+                <h2>Power-Ups And Food Types</h2>
+                <p>Slitheroo adds a few power-ups and food variants so the best route is not always the nearest item. In practice, this changes decision-making more than people expect. The safest line is often better than the flashiest line, even when a more valuable pickup is visible.</p>
                 <ul class="content-list">
-                    <li><strong>Normal:</strong> You level up every 50 points. This gives you more time to settle into a rhythm, plan routes, and adapt as the board changes. Normal is the recommended starting point for new players and is still highly competitive on the leaderboard.</li>
-                    <li><strong>Hard:</strong> You level up every 100 points, but this actually means each level milestone takes longer to reach — the real challenge is that obstacles accumulate faster relative to your snake's growth, creating tighter conditions sooner. Speed increases apply at the same rate but feel more punishing because the board fills up quickly.</li>
+                    <li><strong>Shield:</strong> helps absorb a mistake.</li>
+                    <li><strong>Score boost effects:</strong> matter most when paired with already clean board control.</li>
+                    <li><strong>Slow or ghost-style effects:</strong> are strongest when used to recover from pressure, not as an excuse to rush blindly.</li>
                 </ul>
             </section>
 
             <section class="content-section">
-                <h2>Scoring System</h2>
-                <p>Understanding how scoring works gives you a clear picture of where to focus your energy during a run.</p>
+                <h2>How To Improve Quickly</h2>
                 <ul class="content-list">
-                    <li><strong>Food pickups:</strong> Each piece of food you eat adds 10 points to your score and grows your snake by one segment.</li>
-                    <li><strong>Streak bonus:</strong> The streak counter in the top left tracks how quickly you are eating food. If you eat the next piece within the combo window, your streak count increases. While the streak counter is mostly motivational in the current version, maintaining it reflects efficient, aggressive play that naturally leads to higher scores.</li>
-                    <li><strong>Level progression:</strong> As you level up, the game speed increases and more obstacles appear. Higher levels do not multiply your points directly, but they increase the difficulty, making each additional food pickup harder to earn.</li>
-                    <li><strong>Arena expansion:</strong> Once your snake occupies more than 80 percent of the board, the arena expands. If you push past 95 percent occupancy after expansion, you trigger the Ultimate Victory condition — the highest possible achievement in a single run.</li>
-                    <li><strong>High score tracking:</strong> Your personal best is saved locally in your browser. It persists between sessions as long as you do not clear your browser storage.</li>
+                    <li>Stay near the center early so you keep more escape options.</li>
+                    <li>Look at the route after the next pickup, not only the pickup itself.</li>
+                    <li>Use Zen for route confidence and Ranked for real pressure.</li>
+                    <li>Play Daily when you want a fair comparison against other players on the exact same board.</li>
+                    <li>Use one nickname consistently so your leaderboard history stays recognizable.</li>
                 </ul>
             </section>
 
             <section class="content-section">
-                <h2>Leaderboard and Nicknames</h2>
-                <p>Slitheroo's leaderboard system rewards consistent play over time. Here is how it works and how to make the most of it.</p>
-                <ul class="content-list">
-                    <li><strong>Set your nickname:</strong> Before your first run, enter a nickname in the main menu. It must be 3 to 16 characters using letters, numbers, spaces, underscores, or hyphens.</li>
-                    <li><strong>Use the same nickname consistently:</strong> Your daily rank and all-time placement are tied to your nickname. Changing it creates a separate identity on the board.</li>
-                    <li><strong>Daily leaderboard:</strong> Resets every day at midnight UTC. It shows the top 10 scores for the current day. A fresh daily reset means a new chance to reach the top regardless of your all-time ranking.</li>
-                    <li><strong>All-time leaderboard:</strong> Shows the top 50 highest scores ever recorded across all players. This is the most competitive board and requires consistently strong runs to place.</li>
-                    <li><strong>Score submission:</strong> Your score is automatically submitted at the end of a Ranked run. You will see a status message confirming submission. If it fails due to a network issue, a retry button appears.</li>
-                </ul>
+                <h2>Where To Go Next</h2>
+                <p>If you want the submission rules behind the live boards, read <a href="leaderboard-rules.html">Leaderboard Rules</a>. If you are troubleshooting input, offline mode, or saved stats, use the <a href="faq.html">Help page</a>. If you want project notes and design context, read the <a href="blog.html">Devlog</a>.</p>
             </section>
-
-            <section class="content-section">
-                <h2>Continue Feature</h2>
-                <p>Slitheroo includes a one-time continue option per day in Ranked mode. When your run ends, you will see a continue prompt if you have not used your daily continue yet. Activating the continue revives your snake at its last safe position with a short grace period so you can recover your route. This is a powerful tool for saving a high-scoring run — use it strategically rather than burning it on a low-score game.</p>
-            </section>
-
-            <section class="content-section">
-                <h2>Basic Strategy Tips</h2>
-                <p>These fundamentals apply to almost every run and will immediately improve your survival rate.</p>
-                <ul class="content-list">
-                    <li><strong>Start near the center:</strong> Early in the game, positioning near the center of the board gives you the maximum number of escape directions. Cornering yourself early is one of the most common beginner mistakes.</li>
-                    <li><strong>Think ahead, not just at the food:</strong> Always plan your exit route before committing to a food pickup. Ask yourself: after I eat this, where do I go next?</li>
-                    <li><strong>Use long straight lines:</strong> Straight runs are predictable and safe. They reduce the number of turns you need to make and give you time to assess the board.</li>
-                    <li><strong>Don't panic-turn:</strong> Rapid, unplanned direction changes are the leading cause of crashes. When the board feels tight, slow your decision-making and choose the safest available path even if it means skipping a food pickup.</li>
-                    <li><strong>Keep your tail visible:</strong> As your snake grows, it becomes easy to lose track of where your tail is. Always know where the end of your snake is before making a turn into that area.</li>
-                </ul>
-            </section>
-
-            <section class="content-section">
-                <h2>Advanced Techniques</h2>
-                <p>Once you have mastered the basics, these techniques will separate you from average players and push your scores into leaderboard territory.</p>
-
-                <h3 style="margin: 1rem 0 0.5rem; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-color);">Perimeter Looping</h3>
-                <p>One of the most reliable advanced strategies is to run your snake along the outer edges of the board in a large loop. This keeps your body out of the central area, leaving the middle open for food collection. As you gather food, you can gradually spiral inward. This technique works especially well in the mid-game when your snake is long enough to benefit from a structured route but the board is not yet fully crowded.</p>
-
-                <h3 style="margin: 1rem 0 0.5rem; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-color);">Snake Coiling</h3>
-                <p>When the board is getting tight, avoid creating small isolated pockets of space. Instead, try to keep your snake coiled in a way that leaves one continuous open path you can follow. Think of your snake as a spring — you want it wound up in a way where there is always a clear direction to unwind toward.</p>
-
-                <h3 style="margin: 1rem 0 0.5rem; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-color);">Food Prioritization</h3>
-                <p>Not all food pickups are equal. If a piece of food is in a relatively open area with clear approach and exit routes, it is worth prioritizing. If it is tucked into a corner or near an obstacle cluster, consider whether the 10 points is worth the risk. In a long run, surviving to eat ten safe pieces is always better than dying for one risky pickup.</p>
-
-                <h3 style="margin: 1rem 0 0.5rem; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-color);">Obstacle Awareness at Higher Levels</h3>
-                <p>In Ranked mode, obstacles begin appearing at level 2 and continue accumulating as you progress. At level 10 and above, obstacles also begin to move. Train yourself to glance at the full board between food pickups so you always have an updated mental map of where obstacles are clustered.</p>
-
-                <h3 style="margin: 1rem 0 0.5rem; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-color);">Speed Adaptation</h3>
-                <p>As your level increases, the game speeds up. Many players who perform well at low speeds make frequent errors when the pace accelerates. Practice deliberately at higher levels — let yourself die a few times at speed just to build muscle memory. The goal is to reduce the time you spend consciously processing each move so the correct direction becomes instinctive.</p>
-            </section>
-
-            <section class="content-section">
-                <h2>Leaderboard Climbing Strategy</h2>
-                <p>If your goal is to reach the top of the daily or all-time boards, treat your sessions with intention rather than playing randomly. A few focused runs each day will outperform many scattered attempts. Use the same nickname every session, review where your runs are ending and why, and refine specific weaknesses — whether that is wall collisions, self-crashes in tight spaces, or poor positioning at high speed. Consistent improvement over several days will move you up the rankings faster than any single exceptional run.</p>
-                <p>Ready to put all of this into practice? Head back to the <a href="index.html">game page</a> and start your next run.</p>
-            </section>
-
         </main>
 
         <footer class="site-footer" aria-label="Site footer">
@@ -148,11 +93,11 @@
                 <a href="contact.html">Contact</a>
                 <a href="about.html">About</a>
                 <a href="how-to-play.html">How to Play</a>
-                <a href="blog.html">Blog</a>
-                <a href="faq.html">FAQ</a>
-                <a href="changelog.html">Changelog</a>
+                <a href="leaderboard-rules.html">Leaderboard Rules</a>
+                <a href="blog.html">Devlog</a>
+                <a href="faq.html">Help</a>
             </div>
-            <p class="footer-note">Slitheroo is a browser-based arcade experience built for quick, competitive fun.</p>
+            <p class="footer-note">Published by slitheroo.online - classic games reborn.</p>
         </footer>
     </div>
     <script>

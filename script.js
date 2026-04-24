@@ -77,26 +77,25 @@ const FOOD_TYPES = {
 
 // ── Power-up types ───────────────────────────────────────────
 const POWERUP_TYPES = {
-  shield:     { color: '#7c3aed', glow: '#a78bfa', icon: '🛡', duration: 8000,  label: 'Shield'      },
-  multiplier: { color: '#f59e0b', glow: '#fcd34d', icon: '✕', duration: 7000,  label: '2× Score'    },
-  slowmo:     { color: '#0ea5e9', glow: '#38bdf8', icon: '⏷', duration: 6000,  label: 'Slow Motion' },
-  ghost:      { color: '#10b981', glow: '#6ee7b7', icon: '👻', duration: 5000, label: 'Ghost'       }
+  shield:     { color: '#7c3aed', glow: '#a78bfa', icon: 'SH', duration: 8000, label: 'Shield' },
+  multiplier: { color: '#f59e0b', glow: '#fcd34d', icon: 'X2', duration: 7000, label: 'X2 Score' },
+  slowmo:     { color: '#0ea5e9', glow: '#38bdf8', icon: 'SL', duration: 6000, label: 'Slow Motion' },
+  ghost:      { color: '#10b981', glow: '#6ee7b7', icon: 'GH', duration: 5000, label: 'Ghost' }
 };
-
-// ── Achievement definitions ──────────────────────────────────
+// Achievement definitions
 const ACHIEVEMENT_DEFS = [
-  { id: 'first_blood',   label: 'First Run',        desc: 'Complete your first game',             icon: '🎮', check: (s,g) => g.gamesPlayed >= 1 },
-  { id: 'hungry',        label: 'Hungry',           desc: 'Eat 50 food in one run',               icon: '🍎', check: (s,g) => g.foodThisRun >= 50 },
-  { id: 'centurion',     label: 'Centurion',        desc: 'Score 100 points',                     icon: '💯', check: (s,g) => s >= 100 },
-  { id: 'high_roller',   label: 'High Roller',      desc: 'Score 500 points',                     icon: '🎰', check: (s,g) => s >= 500 },
-  { id: 'legend',        label: 'Legend',           desc: 'Score 1000 points',                    icon: '👑', check: (s,g) => s >= 1000 },
-  { id: 'survivor',      label: 'Survivor',         desc: 'Reach level 5',                        icon: '🏆', check: (s,g) => g.levelReached >= 5 },
-  { id: 'power_hungry',  label: 'Power Hungry',     desc: 'Collect 10 power-ups total',           icon: '⚡', check: (s,g) => g.totalPowerups >= 10 },
-  { id: 'speed_demon',   label: 'Speed Demon',      desc: 'Reach level 8',                        icon: '💨', check: (s,g) => g.levelReached >= 8 },
-  { id: 'ghost_rider',   label: 'Ghost Rider',      desc: 'Use Ghost power-up',                   icon: '👻', check: (s,g) => g.usedGhost },
-  { id: 'daily_devotee', label: 'Daily Devotee',    desc: 'Play 3 days in a row',                 icon: '📅', check: (s,g) => g.dayStreak >= 3 },
-  { id: 'week_warrior',  label: 'Week Warrior',     desc: 'Play 7 days in a row',                 icon: '🔥', check: (s,g) => g.dayStreak >= 7 },
-  { id: 'combo_king',    label: 'Combo King',       desc: 'Reach a x10 streak',                   icon: '🔗', check: (s,g) => g.maxStreak >= 10 }
+  { id: 'first_blood',   label: 'First Run',        desc: 'Complete your first game',             icon: 'RUN', check: (s,g) => g.gamesPlayed >= 1 },
+  { id: 'hungry',        label: 'Hungry',           desc: 'Eat 50 food in one run',               icon: '50', check: (s,g) => g.foodThisRun >= 50 },
+  { id: 'centurion',     label: 'Centurion',        desc: 'Score 100 points',                     icon: '100', check: (s,g) => s >= 100 },
+  { id: 'high_roller',   label: 'High Roller',      desc: 'Score 500 points',                     icon: '500', check: (s,g) => s >= 500 },
+  { id: 'legend',        label: 'Legend',           desc: 'Score 1000 points',                    icon: '1K', check: (s,g) => s >= 1000 },
+  { id: 'survivor',      label: 'Survivor',         desc: 'Reach level 5',                        icon: 'L5', check: (s,g) => g.levelReached >= 5 },
+  { id: 'power_hungry',  label: 'Power Hungry',     desc: 'Collect 10 power-ups total',           icon: 'P10', check: (s,g) => g.totalPowerups >= 10 },
+  { id: 'speed_demon',   label: 'Speed Demon',      desc: 'Reach level 8',                        icon: 'L8', check: (s,g) => g.levelReached >= 8 },
+  { id: 'ghost_rider',   label: 'Ghost Rider',      desc: 'Use Ghost power-up',                   icon: 'GH', check: (s,g) => g.usedGhost },
+  { id: 'daily_devotee', label: 'Daily Devotee',    desc: 'Play 3 days in a row',                 icon: 'D3', check: (s,g) => g.dayStreak >= 3 },
+  { id: 'week_warrior',  label: 'Week Warrior',     desc: 'Play 7 days in a row',                 icon: 'D7', check: (s,g) => g.dayStreak >= 7 },
+  { id: 'combo_king',    label: 'Combo King',       desc: 'Reach a x10 streak',                   icon: 'X10', check: (s,g) => g.maxStreak >= 10 }
 ];
 
 // ── State ────────────────────────────────────────────────────
@@ -1318,7 +1317,7 @@ function handleChallengeParam() {
   if (rival && challengeScore) {
     const banner = document.createElement('div');
     banner.className = 'challenge-banner';
-    banner.innerHTML = `<span>⚔️ <strong>${rival}</strong> challenges you to beat <strong>${challengeScore}</strong>!</span>`;
+    banner.innerHTML = `<span><strong>${rival}</strong> challenges you to beat <strong>${challengeScore}</strong>!</span>`;
     document.body.appendChild(banner);
     setTimeout(() => banner.remove(), 5000);
   }
@@ -1330,7 +1329,7 @@ restartBtn?.addEventListener('click', () => { if (awaitingContinue && !isFinaliz
 continueBtn?.addEventListener('click', async () => {
   if (!awaitingContinue || continueBtn.disabled) return;
   continueBtn.disabled = true;
-  if (continueStatus) continueStatus.textContent = 'Loading rewarded ad…';
+  if (continueStatus) continueStatus.textContent = 'Loading rewarded ad...';
   const ok = await requestRewardedAdWrapper();
   if (!ok) { if (continueStatus) continueStatus.textContent = 'Ad unavailable. Try again.'; continueBtn.disabled = false; return; }
   consumeContinue(); awaitingContinue = false; continuedThisRun = true; isFinalized = false;
@@ -1375,7 +1374,7 @@ diffBtns.forEach(btn => btn.addEventListener('click', () => { diffBtns.forEach(b
 document.getElementById('sound-toggle-btn')?.addEventListener('click', () => {
   soundEnabled = !soundEnabled;
   const btn = document.getElementById('sound-toggle-btn');
-  if (btn) btn.textContent = soundEnabled ? '🔊' : '🔇';
+  if (btn) btn.textContent = soundEnabled ? 'S' : 'X';
 });
 
 window.addEventListener('resize', debounce(resizeCanvas, 120));
@@ -1408,3 +1407,5 @@ try {
   if (splashScreen) { splashScreen.classList.remove('active'); splashScreen.classList.add('hidden'); }
   if (startScreen) { startScreen.classList.remove('hidden'); startScreen.classList.add('active'); }
 }
+
+
